@@ -13,6 +13,3 @@ __pycache__/
 # ignore the contents but keep the directory in git via .gitkeep
 outputs/gguf/*
 !outputs/gguf/.gitkeep
-
-data/raw/*
-!data/raw/.gitkeep
