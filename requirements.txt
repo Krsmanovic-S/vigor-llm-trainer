@@ -7,3 +7,4 @@ bitsandbytes
 accelerate
 huggingface_hub
 python-dotenv
+gradio
