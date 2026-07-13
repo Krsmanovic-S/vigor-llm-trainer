@@ -3,23 +3,12 @@ from threading import Thread
 from dotenv import load_dotenv
 from transformers import AutoModelForCausalLM, AutoTokenizer, TextIteratorStreamer, BitsAndBytesConfig
 import gradio as gr
+from config import SYSTEM_PROMPT
 
 # ---------------------------------------------------------------------------
 # Config
 # ---------------------------------------------------------------------------
 MODEL_ID = "Qwen/Qwen2.5-1.5B-Instruct"
-
-SYSTEM_PROMPT = """
-    You are a knowledgeable personal fitness and nutrition coach. Give accurate, practical, and concise advice to any 
-    questions regarding fitness, bodybuilding, exercises, nutrition and supplements. Never suggest or explain any kind
-    of steroid use or give advice on illegal substances.
-
-    If a question pertains to a topic not related to fitness tell the user that you are a fitness coach, not a general
-    knowledge LLM.
-
-    If you do not know an answer to a question, say so immidiatelly. If you need more information from the user, respond
-    with only the questions you have for them. 
-"""
 
 MAX_NEW_TOKENS = 128
 
@@ -32,7 +21,7 @@ load_dotenv()
 HF_TOKEN = os.getenv("HF_TOKEN") or None
 
 _device = "cuda" if torch.cuda.is_available() else "cpu"
-print(f"Loading {MODEL_ID} on {_device} (first run downloads ~3GB) ...")
+print(f"Loading {MODEL_ID} on {_device} (first run download) ...")
 
 quant_config = BitsAndBytesConfig(
     load_in_4bit=True,
@@ -57,7 +46,6 @@ def chat(message, history):
     """Stream one reply given the new message and prior turns."""
     messages = [{"role": "system", "content": SYSTEM_PROMPT}]
 
-    # Gradio 6 may hand back content as a list of blocks - flatten to text.
     for turn in history:
         content = turn["content"]
         if isinstance(content, list):
