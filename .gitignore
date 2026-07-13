@@ -1,0 +1,18 @@
+# secrets - .env is ignored, .env.example is tracked
+.env
+
+# python
+.venv/
+__pycache__/
+*.pyc
+
+# model artifacts
+*.gguf
+*.safetensors
+
+# ignore the contents but keep the directory in git via .gitkeep
+outputs/gguf/*
+!outputs/gguf/.gitkeep
+
+data/raw/*
+!data/raw/.gitkeep
