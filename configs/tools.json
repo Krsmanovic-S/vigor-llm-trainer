@@ -1,0 +1,192 @@
+[
+    {
+        "type": "function",
+        "function": {
+            "name": "read_user_data",
+            "description": "Read the user's own data. Use for any question about the user themselves, what they have logged, their saved templates, or their workout in progress. Do NOT use to look up exercises in the app catalog - use search_exercises for that.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "scope": {
+                        "type": "array",
+                        "description": "What to read. Pass several at once when a question needs them. profile: age, height, weight, body fat, TDEE. measurements: body circumferences. muscle_balance: training volume score 0-5 per muscle. workout_history: completed workouts. exercise_history: past sessions for one exercise, needs exercise_name. templates: saved workout templates. active_workout: the session in progress. menstrual: current cycle phase.",
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "profile",
+                                "measurements",
+                                "muscle_balance",
+                                "workout_history",
+                                "exercise_history",
+                                "templates",
+                                "active_workout",
+                                "menstrual"
+                            ]
+                        }
+                    },
+                    "days": {
+                        "type": "integer",
+                        "description": "How far back to look. Omit for current values only. Applies to profile, measurements, workout_history and exercise_history."
+                    },
+                    "exercise_name": {
+                        "type": "string",
+                        "description": "Required when scope includes exercise_history."
+                    }
+                },
+                "required": ["scope"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "search_exercises",
+            "description": "Search the app's exercise catalog. Use to find exercises the user could do, or to check an exercise exists before writing it into a template or workout. Returns catalog entries only, not the user's performance.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "Free text name match."
+                    },
+                    "body_part": {
+                        "type": "string",
+                        "enum": [
+                            "chest",
+                            "back",
+                            "shoulders",
+                            "arms",
+                            "legs",
+                            "abs",
+                            "cardio",
+                            "other"
+                        ]
+                    },
+                    "equipment": {
+                        "type": "string",
+                        "enum": [
+                            "dumbbell",
+                            "barbell",
+                            "cable",
+                            "machine",
+                            "cardio",
+                            "treadmill",
+                            "bodyweight",
+                            "other"
+                        ]
+                    },
+                    "muscle": {
+                        "type": "string",
+                        "description": "Matches primary or secondary muscles.",
+                        "enum": [
+                            "neck",
+                            "chest",
+                            "abs",
+                            "obliques",
+                            "front_delt",
+                            "lateral_delt",
+                            "rear_delt",
+                            "biceps",
+                            "triceps",
+                            "forearms",
+                            "traps",
+                            "lats",
+                            "lower_back",
+                            "quadriceps",
+                            "hamstrings",
+                            "calves",
+                            "tibia",
+                            "glutes"
+                        ]
+                    },
+                    "limit": {
+                        "type": "integer",
+                        "description": "Max results, default 10, maximum 25."
+                    }
+                },
+                "required": []
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "manage_template",
+            "description": "Create, modify, rename or delete a saved workout template. For modify, send the complete desired exercise list - it replaces the existing one, so read the template first. Ask the user to confirm before deleting.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "operation": {
+                        "type": "string",
+                        "enum": ["create", "modify", "rename", "delete"]
+                    },
+                    "template_name": {
+                        "type": "string",
+                        "description": "The template to act on. For rename this is the existing name."
+                    },
+                    "new_name": {
+                        "type": "string",
+                        "description": "Required for rename."
+                    },
+                    "exercises": {
+                        "type": "array",
+                        "description": "Required for create and modify. The full desired list.",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "name": { "type": "string" },
+                                "target_sets": { "type": "integer" },
+                                "target_reps": { "type": "integer" },
+                                "target_weight": {
+                                    "type": "number",
+                                    "description": "Optional, 0 means not prescribed."
+                                }
+                            },
+                            "required": ["name", "target_sets", "target_reps"]
+                        }
+                    }
+                },
+                "required": ["operation", "template_name"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "manage_active_workout",
+            "description": "Modify the workout currently in progress. Only works while a workout is active. You cannot mark sets as completed - the user logs those in the app.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "action": {
+                        "type": "string",
+                        "enum": [
+                            "add_exercise",
+                            "remove_exercise",
+                            "swap_exercise",
+                            "add_set",
+                            "remove_set"
+                        ]
+                    },
+                    "exercise_name": {
+                        "type": "string",
+                        "description": "The exercise to act on. For swap_exercise this is the one being replaced."
+                    },
+                    "replacement_name": {
+                        "type": "string",
+                        "description": "Required for swap_exercise."
+                    },
+                    "count": {
+                        "type": "integer",
+                        "description": "How many sets to add or remove, default 1."
+                    },
+                    "position": {
+                        "type": "integer",
+                        "description": "Where to insert, 1-based. Only for add_exercise. Omit to append at the end."
+                    }
+                },
+                "required": ["action", "exercise_name"]
+            }
+        }
+    }
+]
