@@ -1208,6 +1208,219 @@ Each one has a squat or hinge, a press, a pull and one smaller movement. Alterna
 
 I dropped the isolation work like curls, since with limited time the compounds give you far more for the same minutes. Your arms will still get plenty from the pressing and rowing. If you find yourself having spare time we can add some specific isolations for body parts that you would prefer focusing on.
 
+## Conversation 53 - Supplements
+
+=== CATEGORY ===
+Supplements
+
+=== USER ===
+What supplements should I actually be taking?
+
+=== ASSISTANT ===
+Very few are worth the money. The short list:
+
+• **Creatine Monohydrate** - the most well supported supplement there is. Around 3-5 g daily, no loading phase needed, no cycling. Monohydrate is the cheapest form and nothing else outperforms it.
+• **Protein Powder** - not magic, just a convenient way to hit your protein target if food alone is difficult. Treat it as food, not a supplement.
+• **Magnesium Bisglycinate** - helps with sleep and recovery, hard to intake enough through foods alone.
+• **Vitamin D** - worth it if you're deficient, which is common in winter at northern latitudes. Worth a blood test rather than guessing.
+• **Omega 3** - linked to brain and heart health, these fatty amino acids are not produced by the body on its own.
+
+Everything else - BCAAs, testosterone boosters, fat burners, most pre-workout blends - has either weak evidence or works only because of the caffeine already in it.
+
+None of this matters much compared to training consistently and having good nutrition. Supplements are the last few percent, not the foundation.
+
+---
+
+## Conversation 54 - Sleep
+
+=== CATEGORY ===
+Recovery
+
+=== USER ===
+Does sleep really matter that much for building muscle?
+
+=== ASSISTANT ===
+More than most people expect, yes. It's probably the single most underrated variable in training.
+
+Short sleep affects you in a few ways at once:
+
+• Strength and power output drop, so your sessions are worse
+• Recovery between sessions slows down
+• Hunger regulation gets worse, which makes eating well harder
+• Injury risk goes up, partly through worse coordination
+
+Most adults do best somewhere in the **7 to 9 hour** range. Consistency of timing matters too - going to bed and waking at roughly the same times is easier on your body than hitting the same total with a chaotic schedule.
+
+If you're training hard and not recovering, sleep is the first thing I'd look at before changing anything in your program.
+
+How much are you typically getting?
+
+---
+
+## Conversation 55 - Do I Need a Deload
+
+=== CATEGORY ===
+Recovery / deload
+
+=== USER ===
+I feel run down and everything feels heavy lately. Do I need a deload?
+
+=== ASSISTANT ===
+<tool_call>
+{"name": "read_user_data", "arguments": {"scope": ["workout_history"], "days": 42}}
+</tool_call>
+
+=== TOOL ===
+{"workout_history": {"window_days": 42, "returned": 16, "truncated": false, "weight_units": "kg", "workouts": [{"date": "2026-07-25", "name": "Lower Body", "duration_min": 64, "total_weight": 11980.0, "progress_count": 0, "exercises": [{"name": "Barbell Squat", "sets": 4, "top_set": "5 x 120.0"}]}, {"date": "2026-07-23", "name": "Upper Body", "duration_min": 71, "total_weight": 9410.0, "progress_count": 0, "exercises": [{"name": "Bench Press", "sets": 4, "top_set": "7 x 85.0"}]}, {"date": "2026-07-21", "name": "Lower Body", "duration_min": 66, "total_weight": 12040.0, "progress_count": 0, "exercises": [{"name": "Barbell Squat", "sets": 4, "top_set": "5 x 120.0"}]}, {"date": "2026-07-18", "name": "Upper Body", "duration_min": 69, "total_weight": 9520.0, "progress_count": 1, "exercises": [{"name": "Bench Press", "sets": 4, "top_set": "8 x 85.0"}]}, {"date": "2026-07-16", "name": "Lower Body", "duration_min": 62, "total_weight": 12180.0, "progress_count": 0, "exercises": [{"name": "Barbell Squat", "sets": 4, "top_set": "6 x 120.0"}]}, {"date": "2026-07-14", "name": "Upper Body", "duration_min": 68, "total_weight": 9600.0, "progress_count": 2, "exercises": [{"name": "Bench Press", "sets": 4, "top_set": "8 x 85.0"}]}]}}
+
+=== ASSISTANT ===
+Your data agrees with how you feel. Looking at the last six sessions, **four of them recorded zero progress**, and your squat top set has gone from 6 reps down to 5 at the same weight.
+
+That pattern - effort staying high while output slips - is what accumulated fatigue looks like.
+
+I'd take a deload week:
+
+• Keep the same exercises, same set count and the same days
+• Drop your working weights to around 50-60% of normal
+• Every set should feel light and easy to do
+• Maintain good form and rep speed - don't blaze through everything
+
+It should feel easy. That's the point - you're keeping the movement pattern while letting fatigue clear.
+
+Most people come back stronger the following week. Use the same workouts as you did so far, I'd suggest just renaming the workout to indicate that it was a deload one.
+
+---
+
+## Conversation 56 - When to Add Weight
+
+=== CATEGORY ===
+Training Principles / progression
+
+=== USER ===
+How do I know when to increase the weight?
+
+=== ASSISTANT ===
+The simplest method that works is **double progression** - you progress reps first, then weight.
+
+It works like this:
+
+• Pick a rep range, say 8-10
+• Start at a weight where you can get 8 on every set
+• Each session, try to add reps rather than weight
+• Once you hit **10 on all your sets**, add the smallest increment available continue from there
+
+So the weight only moves when you've earned it across **every set**, not just your first one.
+
+A few things that help:
+
+• Use small jumps - 2.5 kg on compounds, 1-2 kg on isolation work
+• Don't chase progress every single session, weekly is more realistic
+• If you stall at the same weight for three or four sessions, that's when to look at sleep, food, or a deload
+
+This is why sticking to the same exercises matters - you can't track progression properly if the movement keeps changing.
+
+---
+
+## Conversation 57 - Rest Between Sets
+
+=== CATEGORY ===
+Training Principles
+
+=== USER ===
+How long should I rest between sets?
+
+=== ASSISTANT ===
+Longer than most people think, particularly on the big lifts.
+
+- **Compounds** (squat, bench, row, deadlift) - 2 to 3 minutes
+- **Isolation** (curls, extensions, raises) - 60 to 90 seconds
+
+The reason is simple: if you rest too little, the limiting factor on your next set becomes how out of breath you are rather than how strong the muscle is. You end up doing fewer reps at the same weight, which means less total work.
+
+Short rest periods don't burn meaningfully more fat either - that's mostly a myth. If time is the constraint, you're better off cutting an exercise than cutting rest.
+
+One practical exception: you can pair two exercises that don't compete with each other, like calves and biceps, and rest one while doing the other. That saves time without costing performance.
+
+---
+
+## Conversation 58 - Soreness
+
+=== CATEGORY ===
+Recovery
+
+=== USER ===
+I'm not sore anymore after my workouts. Am I not training hard enough?
+
+=== ASSISTANT ===
+Not at all. Soreness is a poor measure of how good a session was.
+
+What actually causes it is doing something unfamiliar - a new exercise, a new rep range, or coming back after time off. As you repeat a movement your body adapts and the soreness fades, even though the training is just as effective. That's the adaptation working, not the stimulus disappearing.
+
+The things that actually tell you a session was productive:
+
+• You're adding reps or weight over time
+• The last few reps of your sets are genuinely difficult
+• You're recovering enough to repeat it next session
+
+If you chase soreness you'll end up changing exercises constantly, and then you lose the ability to track progression at all.
+
+Is your training still moving forward on paper?
+
+---
+
+## Conversation 59 - Cardio and Muscle
+
+=== CATEGORY ===
+Training Principles
+
+=== USER ===
+Will doing cardio kill my gains?
+
+=== ASSISTANT ===
+Not at the amounts most people do. The interference effect is real but it's usually overstated.
+
+What matters is the dose and the type:
+
+- **Low to moderate cardio** - walking, easy cycling, a couple of sessions a week - has essentially no negative effect and helps recovery and health
+- **High volume intense cardio**, especially long distance running, is where it starts competing with strength work
+- **Running interferes more than cycling**, largely because of the eccentric loading on your legs
+
+Practical ways to keep them apart:
+
+• Put cardio on non-leg days where you can
+• If it has to be the same day, lift first
+• Keep hard cardio and hard leg sessions from landing back to back
+
+The bigger risk with cardio during a bulk isn't interference, it's that it makes eating enough harder.
+
+---
+
+## Conversation 60 - Hitting Protein
+
+=== CATEGORY ===
+Nutrition
+
+=== USER ===
+I struggle to eat enough protein. Any tips?
+
+=== ASSISTANT ===
+The usual problem is trying to get it all from one or two meals. Spreading it out makes the total much easier to reach.
+
+Practical things that work:
+
+- Anchor every meal around a protein source and build the rest of the plate after
+- Greek yogurt, cottage cheese, eggs and tinned fish need no cooking
+- Cook meat in batches so it's already done when you're hungry
+- A shake covers a gap, but don't let it replace meals - it's less filling than food
+
+Higher protein foods you may be underusing: skyr, lean beef, chicken thigh, tuna, skim milk, and lentils or beans if you want non-meat options.
+
+If you're still short after that, it's often not a protein problem but a total food problem - people who undereat overall usually undereat protein too.
+
+Do you want me to look at your weight trend to see whether you're eating enough in general?
+
+--------------------------------------------------------------------------------
+
 ## Notes for generation
 
 1. **Tool results are realistic, not idealized.** Conversation 4's session data
