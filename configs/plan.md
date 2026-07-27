@@ -1,66 +1,57 @@
+## Enum Definition
+
+This enum will be used as `scope` when retrieving data with a tool call:
+```
+enum ReadDataScope {
+    profile,
+    measurements,
+    workout_history,
+    exercise_history,
+    exercises,
+    templates,
+    active_workout
+}
+```
+This enum will be used as `operation` when using the tools `manage_templates` and `manage_active_workout`:
+```
+enum ManageOperations {
+
+}
+```
+
 ## Available Tools
 
-1. read_user_data(days: int = 0)
+### read_user_data(scope: Map<ReadDataScope, int days = 0>, exercise_name: string = '')
 
-This just gives us current value of all user related data and a history for each entry if applicable.
+Parameter description:
+- scope - required, of type ReadDataScope, tells the function what data to retrieve, is a list so multiple retrievals can be done in one call if needed 
+- days - optional parameter, how far in the past to look for for the given scope, default of 0 means current/latest values
+- exercise_name - optional parameter, used only in the case of `exercise_history` or `exercises` scope to look up specific exercises
 
-If the `days` parameter is 0, we just return current values.
+Scope descriptions:
 
-Returns:
-    - age
-    - gender
-    - height
-    - weight
-    - body fat
-    - activity level
-    - measurements
-    - muscle scores
-    - menstrual settings (if enabled)
+`profile` returns: `age`, `gender`, `height`, `weight`, `body fat`, `activity level`, `menstrual data` (if enabled).
 
-2. read_workout_history(days: int = 0)
+`measurement` returns the following measurements: `chest`, `shoulders`, `left arm`, `right arm`, `waist`, `hip`, `glutes`, `left leg`, `right leg`, `left calf`, `right calf`. 
 
-Gives past finished workouts within a current timeframe of days, e.g. workouts happened in the past 10 days.
+`workout_history` returns a list of past workouts within a given timeframe defined by days in the scope map.
 
-Returns:
-    - workout names
-    - exercises
-    - sets
-    - reps
-    - workout duration
+`exercise_history` returns the past performances (sets, weights, reps, distances etc..) for a given exercise within the timeframe defined by days.
 
-3. read_exercise_history(exercise_name: str)
+`exercises` searches the exercises database for a specific exercise, specified by the `exercise_name` parameter.
 
-Retrieves the history for a given exercise, when it was performed, how much weight was lifted etc..
-We can include stuff like:
-    - estimated 1RM
-    - heaviest weight
-    - best volume
+`templates` returns a list of all templates currently present in the app.
 
-4. modify_workout_template(operation: str, action: str)
+`active_workout` returns all information about a currently active workout if present (name, elapsed time, exercises, set data etc..).
+
+2. manage_template(operation: ManageOperation ..)
 
 CRUD operations for templates, operations can be `create_template`, `delete_template`, `modify_template`. Make sure
 to provide a good argument list here so it is easy to distinguish and to actually code this out.
 
-5. read_workout_templates()
+3. manage_active_workout(action: ManageOperation ..)
 
-Returns the list of current templates the user has.
-
-7. read_exercises(muscle_group: str = None, equipment: str = None)
-
-Seaches the exercises in the DB to match a certain muscle group or equipment type.
-
-8. get_active_workout()
-
-Returns the currently active session if present.
-
-9. modify_active_workout(action: str, exercise: str, ...)
-
-Actions can be `add_exercise`, `swap_exercise`, `remove_exercise`. 
-
-10. modify_user_exercise(name: str, equipment: str, muscle_groups: list)
-
-CRUD operations for exercises, operations can be `create_exercise`, `modify_exercise`. Make sure
-to provide a good argument list here so it is easy to distinguish and to actually code this out.
+Actions can be `add_exercise`, `swap_exercise`, `remove_exercise`, `add_set`, `remove_set`. 
 
 
 
