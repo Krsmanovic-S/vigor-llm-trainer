@@ -46,7 +46,7 @@ DEDUPE_THRESHOLD = 0.85         # Sorensen-Dice, same approach as Tessera
 SEEDS_PER_PROMPT = 3
 
 _PROJECT = Path(__file__).resolve().parent.parent
-SEEDS_PATH = _PROJECT / "data" / "curated_data.md"
+SEEDS_PATH = _PROJECT / "data" / "raw" / "curated_data.md"
 TOOLS_PATH = _PROJECT / "configs" / "tools.json"
 SCENARIOS_PATH = _PROJECT / "data" / "processed" / "scenarios.jsonl"
 CONVERSATIONS_PATH = _PROJECT / "data" / "processed" / "conversations.jsonl"
