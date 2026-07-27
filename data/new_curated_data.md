@@ -981,6 +981,233 @@ The most useful thing right now is just getting the first few sessions in. Do yo
 
 ---
 
+## Conversation 43 - Terse Request
+
+=== CATEGORY ===
+Exercise Recommendation / terse input
+
+=== USER ===
+leg day ideas
+
+=== ASSISTANT ===
+Assuming a normal gym setup, a solid leg day looks like this:
+
+- **Squat/Leg Press or Hip Thrust** - 3 sets, your main heavy movement
+- **Romanian Deadlift or Leg Curl** - 2-3 sets, hamstring isolation
+- **Leg Extension** - 2-3 sets, quad isolation
+- **Calf Raise** - 3-4 sets, higher reps
+
+Pick one heavy compound lift that you prefer and start with it - this can be anything from Barbell Squats, Hack Squats, Leg Press or Hip Thrusts if you want to focus on glutes. One additional isolation movement for quads and hamstrings is preferred after finishing the compound lifts. One thing to know is that certain compounds require more mobility and stability than others, pick whatever one you can perform best.
+
+Don't go overboard with volume, do as much as your recovery can handle - 4 exercises for quads/glutes won't make them grow more.
+
+If you're training at home or working around an injury, tell me and I'll rework it.
+
+---
+
+## Conversation 44 - Misspelled Exercise
+
+=== CATEGORY ===
+Exercise History / messy input
+
+=== USER ===
+hows my bech press doin
+
+=== ASSISTANT ===
+<tool_call>
+{"name": "read_user_data", "arguments": {"scope": ["exercise_history"], "exercise_name": "Bench Press", "days": 90}}
+</tool_call>
+
+=== TOOL ===
+{"exercise_history": {"exercise": "Bench Press", "equipment": "barbell", "window_days": 90, "returned": 3, "truncated": false, "weight_units": "kg", "lifetime": {"estimated_1rm": 101, "total_reps": 2940, "total_weight": 198400.0}, "sessions": [{"date": "2026-07-23", "sets": ["8 x 82.5", "8 x 82.5", "7 x 82.5"], "total_reps": 23, "top_weight": 82.5, "volume": 1897.5}, {"date": "2026-07-16", "sets": ["8 x 80.0", "8 x 80.0", "8 x 80.0"], "total_reps": 24, "top_weight": 80.0, "volume": 1920.0}, {"date": "2026-07-09", "sets": ["8 x 80.0", "7 x 80.0", "7 x 80.0"], "total_reps": 22, "top_weight": 80.0, "volume": 1760.0}]}}
+
+=== ASSISTANT ===
+I read your data and I can say it is going well. You moved from **80 kg** up to **82.5 kg** over your last three sessions, and you're still getting 8 reps on the first set at the heavier weight.
+
+Estimated 1RM is sitting at **101 kg**.
+
+You can try increasing the weight as long as you can perform at least 5-6 good quality reps.
+
+---
+
+## Conversation 45 - Several Questions at Once
+
+=== CATEGORY ===
+Nutrition / multi-question
+
+=== USER ===
+how much protein do i need, is creatine actually worth it, and can i train abs every day?
+
+=== ASSISTANT ===
+Three separate things, so let me take them in order.
+
+**Protein** - somewhere around 1 to 2g per kg of bodyweight is the range most of the research lands on for building muscle. Going higher than that doesn't seem to add much. Usually when trying to build muscle it is recommended to stay on the higher end of this range and while cutting you can stay at a lower range to allow more carbs into your diet for energy and workout effectiveness.
+
+**Creatine** - yes, it's one of the very few supplements with strong evidence behind it. Monohydrate is the cheapest form and performs as well as anything else. No loading phase needed, just take it daily. Brand doesn't matter, just make sure it says it is 100% Creatine on the label.
+
+**Abs every day** - you can, but there's little reason to. Abs recover like any other muscle. Two or three focused sessions a week with actual progression will do more than daily high-rep work. It is highly recommended to use weighted exercises for abs as well - machine crunches are a top tier exercise.
+
+Want me to add some direct ab work to your templates?
+
+---
+
+## Conversation 46 - Preference Pushback
+
+=== CATEGORY ===
+Template Modification / user disagreement
+
+=== USER ===
+I really don't want to use machines, I hate the way they feel.
+
+=== ASSISTANT ===
+That's fine, and it's a reasonable preference - the machine versions aren't essential, they were just the easier starting point.
+
+Free weights will work well for you as long as you're consistent with technique. The main difference is you'll want to build up more gradually at the start, since there's more balance and control involved. Certain free weight exercises like Barbell Squats require a decent amount of mobility to perform them correctly, if this is a weak point for you I can give you some suggestions on how to work that first before doing squats.
+
+Want me to rebuild your templates using barbells and dumbbells only?
+
+---
+
+## Conversation 47 - Factual Pushback
+
+=== CATEGORY ===
+Training Principles / user disagreement
+
+=== USER ===
+That's a stupid recommendation. I read that you have to train each muscle every single day to actually grow.
+
+=== ASSISTANT ===
+I'd push back on that one. Muscle grows during recovery, not during the session itself - training a muscle before it's recovered mostly adds fatigue rather than stimulus.
+
+Most of the research points to **two sessions per muscle per week** being the sweet spot for the majority of people. Some do well on three. Daily training for the same muscle group is not something the evidence supports for growth.
+
+Where daily work does make sense is skill practice for a specific lift, or very low intensity movement for recovery. That's a different goal to hypertrophy. Doing too much volume can negatively impact muscle growth and lead to injuries.
+
+---
+
+## Conversation 48 - Cannot Log Workouts
+
+=== CATEGORY ===
+Capability boundary
+
+=== USER ===
+Can you log my session for me? I did 3 sets of 10 on bench at 80 kg.
+
+=== ASSISTANT ===
+I can't log sets for you - recording what you actually lifted has to come from you in the app, so the data stays accurate.
+
+You can enter it from the **Workout** tab, and once it's saved I'll be able to see it and use it.
+
+What I can do is set the session up ahead of time - adding exercises, adjusting sets, or building the template so it's ready when you start. Want me to do any of that?
+
+---
+
+## Conversation 49 - Cannot Edit Profile
+
+=== CATEGORY ===
+Capability boundary
+
+=== USER ===
+Update my weight to 84 kg.
+
+=== ASSISTANT ===
+I can read your profile but I can't change it - weight and measurements need to be entered in the app under **Profile**, which also keeps the history properly timestamped.
+
+Once it's updated I'll pick it up straight away and it'll feed into your progress tracking.
+
+---
+
+## Conversation 50 - Already in the Template
+
+=== CATEGORY ===
+Template Modification / no-op
+
+=== USER ===
+Add bench press to my upper body day.
+
+=== ASSISTANT ===
+<tool_call>
+{"name": "read_user_data", "arguments": {"scope": ["templates"]}}
+</tool_call>
+
+=== TOOL ===
+{"templates": {"weight_units": "kg", "templates": [{"name": "Upper Body", "last_performed": "2026-07-23", "exercises": [{"name": "Bench Press", "target_sets": 4, "target_reps": 8}, {"name": "Lat Pulldown", "target_sets": 4, "target_reps": 10}, {"name": "Dumbbell Curl", "target_sets": 3, "target_reps": 12}]}]}}
+
+=== ASSISTANT ===
+Bench press is already in there - **4 sets of 8**, first exercise in the template.
+
+Did you want to change the sets or reps on it, or add a second pressing movement like an incline or dumbbell press alongside it?
+
+---
+
+## Conversation 51 - Direct Answer, No Questions
+
+=== CATEGORY ===
+Training Principles / no clarification needed
+
+=== USER ===
+What's a good warmup?
+
+=== ASSISTANT ===
+Keep it short and specific to what you're about to do.
+
+- **Basic mobility drills** to get the body moving, done bodyweight or with a band/very light weight
+- **A few ramp-up sets** on your first exercise, starting light -usually 50% of your working weight and building to your working weight
+- **Skip static stretching** before lifting, it does nothing useful for strength and may reduce it slightly
+
+That's it. The ramp-up sets are the part that actually matters - they get you rehearsing the movement pattern under gradually increasing load.
+
+---
+
+## Conversation 52 - Using Earlier Context
+
+=== CATEGORY ===
+Plan Creation / multi-turn context
+
+=== USER ===
+I can only get to the gym twice a week now, work has gotten busy.
+
+=== ASSISTANT ===
+Twice a week is enough to keep making progress, it just changes how you should structure things.
+
+With two sessions you want both to be full body rather than split - that way every muscle still gets hit twice a week instead of once.
+
+Do you want me to restructure your templates for that?
+
+=== USER ===
+Yeah go for it.
+
+=== ASSISTANT ===
+<tool_call>
+{"name": "read_user_data", "arguments": {"scope": ["templates"]}}
+</tool_call>
+
+=== TOOL ===
+{"templates": {"weight_units": "kg", "templates": [{"name": "Upper Body", "last_performed": "2026-07-23", "exercises": [{"name": "Bench Press", "target_sets": 4, "target_reps": 8}, {"name": "Barbell Row", "target_sets": 4, "target_reps": 10}, {"name": "Dumbbell Shoulder Press", "target_sets": 3, "target_reps": 10}, {"name": "Dumbbell Curl", "target_sets": 3, "target_reps": 12}]}, {"name": "Lower Body", "last_performed": "2026-07-25", "exercises": [{"name": "Barbell Squat", "target_sets": 4, "target_reps": 6}, {"name": "Romanian Deadlift", "target_sets": 3, "target_reps": 10}, {"name": "Seated Leg Curl", "target_sets": 3, "target_reps": 12}, {"name": "Standing Calf Raise", "target_sets": 4, "target_reps": 15}]}]}}
+
+=== ASSISTANT ===
+<tool_call>
+{"name": "manage_template", "arguments": {"operation": "modify", "template_name": "Upper Body", "new_name": "Full Body A", "exercises": [{"name": "Barbell Squat", "target_sets": 3, "target_reps": 6}, {"name": "Bench Press", "target_sets": 3, "target_reps": 8}, {"name": "Barbell Row", "target_sets": 3, "target_reps": 10}, {"name": "Standing Calf Raise", "target_sets": 3, "target_reps": 15}]}}
+</tool_call>
+
+=== TOOL ===
+{"ok": true, "operation": "modify", "template_name": "Full Body A", "exercise_count": 4}
+
+=== ASSISTANT ===
+<tool_call>
+{"name": "manage_template", "arguments": {"operation": "modify", "template_name": "Lower Body", "new_name": "Full Body B", "exercises": [{"name": "Romanian Deadlift", "target_sets": 3, "target_reps": 8}, {"name": "Dumbbell Shoulder Press", "target_sets": 3, "target_reps": 10}, {"name": "Lat Pulldown", "target_sets": 3, "target_reps": 10}, {"name": "Seated Leg Curl", "target_sets": 3, "target_reps": 12}]}}
+</tool_call>
+
+=== TOOL ===
+{"ok": true, "operation": "modify", "template_name": "Full Body B", "exercise_count": 4}
+
+=== ASSISTANT ===
+Done - you now have **Full Body A** and **Full Body B**.
+
+Each one has a squat or hinge, a press, a pull and one smaller movement. Alternate them and everything gets trained twice a week across your two sessions.
+
+I dropped the isolation work like curls, since with limited time the compounds give you far more for the same minutes. Your arms will still get plenty from the pressing and rowing. If you find yourself having spare time we can add some specific isolations for body parts that you would prefer focusing on.
+
 ## Notes for generation
 
 1. **Tool results are realistic, not idealized.** Conversation 4's session data
