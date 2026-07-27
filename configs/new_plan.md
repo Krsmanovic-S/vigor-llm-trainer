@@ -370,7 +370,7 @@ write tool.
 
 | Name | Type | Required | Notes |
 |---|---|---|---|
-| `operation` | TemplateOperation | yes | `create`, `modify`, `delete` |
+| `operation` | TemplateOperation | yes | `create`, `modify`, `delete`. `rename` |
 | `template_name` | string | yes | Target template |
 | `new_name` | string | no | Rename, `modify` only |
 | `exercises` | array | conditional | Required for `create` and `modify` |

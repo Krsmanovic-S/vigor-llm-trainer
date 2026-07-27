@@ -820,6 +820,166 @@ They'll usually have a clear view on what to continue, what to modify and what t
 
 Once you know what they're comfortable with, I'm happy to adjust your templates to match. Just tell me what you've been advised and we'll work from there.
 
+---
+
+## Conversation 35 - Adding an Exercise Mid-Session
+
+=== CATEGORY === Active Workout / add_exercise + position
+
+=== USER === Can you put face pulls in after my rows?
+
+=== ASSISTANT === <tool_call> {"name": "read_user_data", "arguments": {"scope": ["active_workout"]}} </tool_call>
+
+=== TOOL === {"active_workout": {"active": true, "name": "Upper Body", "started_at": "2026-07-27T17:40:00", "elapsed_min": 22, "weight_units": "kg", "exercises": [{"name": "Bench Press", "sets": [{"set": 1, "type": "normal", "weight": 85.0, "reps": 8, "completed": true}, {"set": 2, "type": "normal", "weight": 85.0, "reps": 8, "completed": true}]}, {"name": "Barbell Row", "sets": [{"set": 1, "type": "normal", "weight": 70.0, "reps": 10, "completed": true}, {"set": 2, "type": "normal", "weight": 70.0, "reps": 10, "completed": false}]}, {"name": "Dumbbell Curl", "sets": [{"set": 1, "type": "normal", "weight": 14.0, "reps": 12, "completed": false}]}]}}
+
+=== ASSISTANT === <tool_call> {"name": "manage_active_workout", "arguments": {"action": "add_exercise", "exercise_name": "Face Pull", "position": 3}} </tool_call>
+
+=== TOOL === {"ok": true, "action": "add_exercise", "exercise_name": "Face Pull", "position": 3}
+
+=== ASSISTANT === Added, face pulls sit between your rows and your curls now.
+
+Your upper back is already warm from rowing, and face pulls are one of the better rear delt movements you can do without adding much fatigue.
+
+---
+
+## Conversation 36 - Equipment Occupied
+
+=== CATEGORY === Active Workout / swap_exercise
+
+=== USER === Someone's been on the leg press for ages. What else can I do?
+
+=== ASSISTANT === <tool_call> {"name": "search_exercises", "arguments": {"muscle": "quadriceps", "body_part": "legs", "limit": 6}} </tool_call>
+
+=== TOOL === {"returned": 5, "truncated": false, "exercises": [{"name": "Hack Squat", "equipment": "machine", "body_part": "legs", "primary_muscles": ["quadriceps"], "secondary_muscles": ["glutes"], "is_user_created": false}, {"name": "Bulgarian Split Squat", "equipment": "dumbbell", "body_part": "legs", "primary_muscles": ["quadriceps"], "secondary_muscles": ["glutes"], "is_user_created": false}, {"name": "Leg Extension", "equipment": "machine", "body_part": "legs", "primary_muscles": ["quadriceps"], "secondary_muscles": [], "is_user_created": false}, {"name": "Goblet Squat", "equipment": "dumbbell", "body_part": "legs", "primary_muscles": ["quadriceps"], "secondary_muscles": ["glutes"], "is_user_created": false}, {"name": "Smith Machine Squat", "equipment": "machine", "body_part": "legs", "primary_muscles": ["quadriceps"], "secondary_muscles": ["glutes"], "is_user_created": false}]}
+
+=== ASSISTANT === A few things you could take instead:
+
+• Hack Squat - closest match, similar loading and range
+• Bulgarian Split Squat - only needs dumbbells, but much harder to recover from
+• Barbell / Smith Machine Squat - hardest to do, same targeted muscles
+
+If the hack squat is free I'd go with that, it will feel the most like what you planned. Which do you want?
+
+=== USER === Hack squat is free, use that.
+
+=== ASSISTANT === <tool_call> {"name": "manage_active_workout", "arguments": {"action": "swap_exercise", "exercise_name": "Leg Press", "replacement_name": "Hack Squat"}} </tool_call>
+
+=== TOOL === {"ok": true, "action": "swap_exercise", "from": "Leg Press", "to": "Hack Squat"}
+
+=== ASSISTANT === Swapped. Start a bit lighter than your usual leg press weight for the first set - the angle is different and it usually feels harder than people expect.
+
+---
+
+## Conversation 37 - Adding Sets
+
+=== CATEGORY === Active Workout / add_set + count
+
+=== USER === I've got time left and my arms feel fine, add a couple more sets to the curls.
+
+=== ASSISTANT === <tool_call> {"name": "manage_active_workout", "arguments": {"action": "add_set", "exercise_name": "Dumbbell Curl", "count": 2}} </tool_call>
+
+=== TOOL === {"ok": true, "action": "add_set", "exercise_name": "Dumbbell Curl", "count": 2}
+
+=== ASSISTANT === Two extra sets added to your curls. 
+
+Push them to failure like the other sets but keep the form tight - you will get more out of that than grinding out with worse form.
+
+One thing to remember is to not go overboard with volume, usually less is more.
+
+---
+
+## Conversation 38 - Renaming a Template
+
+=== CATEGORY ===
+Template Modification / rename
+
+=== USER ===
+Can you rename my Upper Body template to Push Pull?
+
+=== ASSISTANT ===
+<tool_call>
+{"name": "manage_template", "arguments": {"operation": "rename", "template_name": "Upper Body", "new_name": "Push Pull"}}
+</tool_call>
+
+=== TOOL ===
+{"ok": true, "operation": "rename", "template_name": "Upper Body", "new_name": "Push Pull"}
+
+=== ASSISTANT ===
+Renamed to **Push Pull**. The exercises and your history for it are unchanged.
+
+---
+
+## Conversation 39 - Looking Up an Exercise
+
+=== CATEGORY === Exercise Recommendation / free-text search
+
+=== USER === Do you have cable crossovers in the app?
+
+=== ASSISTANT === <tool_call> {"name": "search_exercises", "arguments": {"query": "cable crossover", "limit": 5}} </tool_call>
+
+=== TOOL === {"returned": 2, "truncated": false, "exercises": [{"name": "Cable Crossover", "equipment": "cable", "body_part": "chest", "primary_muscles": ["chest"], "secondary_muscles": ["front_delt"], "is_user_created": false}, {"name": "Low Cable Fly Crossover", "equipment": "cable", "body_part": "chest", "primary_muscles": ["chest"], "secondary_muscles": ["front_delt"], "is_user_created": false}]}
+
+=== ASSISTANT === Yes, there are two versions:
+
+• Cable Crossover - standard, cables set high
+• Low Cable Fly Crossover - cables set low, more emphasis on the upper chest
+
+Both are logged as chest movements. Want me to add one of them to a template or your active workout?
+
+---
+
+## Conversation 40 - Current Stats
+
+=== CATEGORY === Progress Analysis / current values
+
+=== USER === What's my weight and body fat right now?
+
+=== ASSISTANT === <tool_call> {"name": "read_user_data", "arguments": {"scope": ["profile"]}} </tool_call>
+
+=== TOOL === {"profile": {"age": 29, "gender": "male", "height": 183, "height_units": "cm", "weight": 84.2, "weight_units": "kg", "body_fat_pct": 15.1, "activity_level": "moderatelyActive", "tdee_kcal": 2870}}
+
+=== ASSISTANT === You're currently at 84.2 kg with body fat at 15.1%.
+
+Want me to pull the trend over the last few months so you can see which direction it's moving?
+
+---
+
+## Conversation 41 - No Templates Yet
+
+=== CATEGORY === Empty state / templates
+
+=== USER === Show me my workout plans.
+
+=== ASSISTANT === <tool_call> {"name": "read_user_data", "arguments": {"scope": ["templates"]}} </tool_call>
+
+=== TOOL === {"templates": {"weight_units": "kg", "templates": []}}
+
+=== ASSISTANT === You don't have any templates saved yet, I can build you one but I need a bit more information about what you're after:
+• What's your main goal?
+• How many days a week can you train?
+• Are you training at home or going to a gym?
+
+Or if you'd rather set them up yourself, you can create templates from the **Workout** tab and I'll work with whatever you build.
+
+---
+
+## Conversation 42 - Nothing Logged Yet
+
+=== CATEGORY === Empty state / no history
+
+=== USER === How am I doing so far?
+
+=== ASSISTANT === <tool_call> {"name": "read_user_data", "arguments": {"scope": ["profile", "workout_history"], "days": 90}} </tool_call>
+
+=== TOOL === {"profile": {"age": 24, "gender": "female", "height": 167, "height_units": "cm", "weight": 61.0, "weight_units": "kg", "activity_level": "lightlyActive"}, "workout_history": {"window_days": 90, "returned": 0, "truncated": false, "weight_units": "kg", "workouts": []}}
+
+=== ASSISTANT === I can see your basics - height, weight and activity level - but there are no workouts logged yet, so there's nothing to compare against.
+
+Once you've finished a handful of sessions I'll be able to tell you a lot more: which lifts are moving, how consistent you've been, and whether anything is getting neglected.
+
+The most useful thing right now is just getting the first few sessions in. Do you want me to put together a starting plan?
+
+---
 
 ## Notes for generation
 
