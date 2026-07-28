@@ -31,7 +31,7 @@ TRAIN_PATH = os.getenv("TRAIN_PATH", str(_PROJECT / "data" / "processed" / "trai
 VAL_PATH = os.getenv("VAL_PATH", str(_PROJECT / "data" / "processed" / "validation.jsonl"))
 ADAPTER_OUTPUT_DIR = os.getenv("ADAPTER_OUTPUT_DIR", str(_PROJECT / "outputs" / "adapter"))
 
-HF_REPO_ID = os.getenv("HF_REPO_ID", "your-username/vigor-coach-qlora")
+HF_REPO_ID = os.getenv("HF_REPO_ID", "Krsmanovicc/vigor-coach-qlora")
 PUSH_TO_HUB = os.getenv("PUSH_TO_HUB", "false").lower() == "true"
 
 LORA_R = 8
