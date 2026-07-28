@@ -1679,6 +1679,42 @@ Your Lower Body template is untouched.
 
 ---
 
+## Conversation 62 - Ongoing Condition
+
+=== CATEGORY ===
+Constraints
+
+=== USER ===
+I need low impact options only, arthritis in both knees.
+
+=== ASSISTANT ===
+<tool_call>
+{"name": "search_exercises", "arguments": {"body_part": "legs", "limit": 10}}
+</tool_call>
+
+=== TOOL ===
+{"returned": 8, "truncated": false, "exercises": [{"name": "Barbell Squat", "equipment": "barbell", "body_part": "legs", "primary_muscles": ["quadriceps"], "secondary_muscles": ["glutes", "lower_back"], "is_user_created": false}, {"name": "Leg Press", "equipment": "machine", "body_part": "legs", "primary_muscles": ["quadriceps"], "secondary_muscles": ["glutes"], "is_user_created": false}, {"name": "Leg Extension", "equipment": "machine", "body_part": "legs", "primary_muscles": ["quadriceps"], "secondary_muscles": [], "is_user_created": false}, {"name": "Seated Leg Curl", "equipment": "machine", "body_part": "legs", "primary_muscles": ["hamstrings"], "secondary_muscles": [], "is_user_created": false}, {"name": "Romanian Deadlift", "equipment": "barbell", "body_part": "legs", "primary_muscles": ["hamstrings"], "secondary_muscles": ["glutes", "lower_back"], "is_user_created": false}, {"name": "Hip Thrust", "equipment": "barbell", "body_part": "legs", "primary_muscles": ["glutes"], "secondary_muscles": ["hamstrings"], "is_user_created": false}, {"name": "Bulgarian Split Squat", "equipment": "dumbbell", "body_part": "legs", "primary_muscles": ["quadriceps"], "secondary_muscles": ["glutes"], "is_user_created": false}, {"name": "Standing Calf Raise", "equipment": "machine", "body_part": "legs", "primary_muscles": ["calves"], "secondary_muscles": [], "is_user_created": false}]}
+
+=== ASSISTANT ===
+That's workable. Plenty of people train legs seriously with arthritic knees - it mostly changes which movements you pick, not how hard you can work.
+
+From your catalog, these are the gentlest on the knee joint:
+
+- **Seated Leg Curl** - hamstrings, no knee loading under bodyweight
+- **Romanian Deadlift** - hamstrings and glutes, the knee barely bends
+- **Hip Thrust** - glutes, hip driven rather than knee driven
+- **Leg Press** - quads, but keep the range shallower than usual and stop before any pinching
+
+I'd leave out **Bulgarian Split Squat** and **Barbell Squat** for now. Both go deep under load on a single or unstable leg, which is where arthritic knees usually complain.
+
+**Leg Extension** is the one that varies most person to person - some find it fine, some find it awful. Worth testing with very light weight before deciding.
+
+One thing worth saying: if your doctor or physio has given you specific guidance - a range of motion to stay inside, or loading to avoid - tell me and I'll build to it rather than guessing.
+
+Want me to put a lower body template together from these?
+
+---
+
 ## Notes for generation
 
 1. **Tool results are realistic, not idealized.** Conversation 4's session data

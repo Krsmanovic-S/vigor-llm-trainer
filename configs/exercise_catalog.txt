@@ -1,0 +1,214 @@
+Ab Wheel|bodyweight|abs|abs|lower_back
+Cable Crunch|cable|abs|abs|obliques
+Captain's Chair Raise|bodyweight|abs|abs|obliques
+Crunch|bodyweight|abs|abs|
+Crunch|machine|abs|abs|
+Decline Crunch|machine|abs|abs|
+Dragon Flag|machine|abs|abs|
+Knee Raise|bodyweight|abs|abs|
+Leg Raise|bodyweight|abs|abs|
+Hanging Knee Raise|bodyweight|abs|abs|
+Hanging Leg Raise|bodyweight|abs|abs|
+Oblique Crunch|bodyweight|abs|obliques|abs
+Oblique Twist|cable|abs|obliques|abs
+Plank|bodyweight|abs|abs|lower_back
+Russian Twist|bodyweight|abs|obliques|abs
+Russian Twist|dumbbell|abs|obliques|abs
+Side Plank|bodyweight|abs|obliques|abs
+Sit Up|bodyweight|abs|abs|obliques
+V Up|bodyweight|abs|abs|obliques
+Bench Dip|bodyweight|arms|triceps|
+Bicep Curl|barbell|arms|biceps|forearms
+Bicep Curl|cable|arms|biceps|forearms
+Bicep Curl|dumbbell|arms|biceps|forearms
+Bicep Curl|machine|arms|biceps|forearms
+Cable Kickback|cable|arms|triceps|
+Chin Up|bodyweight|arms|biceps|lats
+Close Grip Bench Press|barbell|arms|triceps|chest,front_delt
+Concentration Curl|dumbbell|arms|biceps|forearms
+Dead Hang|bodyweight|back|forearms|
+Gripper|other|arms|forearms|
+Hammer Curl|cable|arms|biceps|forearms
+Hammer Curl|dumbbell|arms|biceps|forearms
+Incline Curl|dumbbell|arms|biceps|forearms
+JM Press|barbell|arms|triceps|chest
+JM Press|machine|arms|triceps|chest
+One Arm Biceps Curl|cable|arms|biceps|forearms
+One Arm Triceps Extension|cable|arms|triceps|
+One Arm Triceps Pushdown|cable|arms|triceps|
+Overhead Triceps Extension|cable|arms|triceps|
+Overhead Triceps Extension|dumbbell|arms|triceps|
+Overhead Triceps Extension|machine|arms|triceps|
+Palms Down Wrist Curl|barbell|arms|forearms|
+Palms Down Wrist Curl|cable|arms|forearms|
+Palms Down Wrist Curl|dumbbell|arms|forearms|
+Palms Up Wrist Curl|barbell|arms|forearms|
+Palms Up Wrist Curl|cable|arms|forearms|
+Palms Up Wrist Curl|dumbbell|arms|forearms|
+Preacher Curl|barbell|arms|biceps|forearms
+Preacher Curl|dumbbell|arms|biceps|forearms
+Preacher Curl|machine|arms|biceps|forearms
+Reverse Curl|barbell|arms|forearms|biceps
+Reverse Curl|dumbbell|arms|forearms|biceps
+Reverse Curl|cable|arms|forearms|biceps
+Rope Pushdown|cable|arms|triceps|
+Seated Dip|machine|arms|triceps|
+Skullcrusher|barbell|arms|triceps|
+Skullcrusher|dumbbell|arms|triceps|
+Spider Curls|barbell|arms|forearms|biceps
+Spider Curls|dumbbell|arms|forearms|biceps
+Triceps Dip|bodyweight|arms|triceps|chest,front_delt
+Triceps Kickback|cable|arms|triceps|
+Triceps Kickback|dumbbell|arms|triceps|
+Triceps Pushdown|cable|arms|triceps|
+V-Handle Triceps Extension|cable|arms|triceps|
+Zottman Curl|barbell|arms|biceps|forearms
+Zottman Curl|dumbbell|arms|biceps|forearms
+Back Extension|machine|back|lower_back|glutes,hamstrings
+Back Lever|bodyweight|back|lats|lower_back,biceps
+Bent Over Row|barbell|back|lats|traps,biceps,lower_back
+Bent Over Row|dumbbell|back|lats|traps,biceps,lower_back
+Bent Over Row - Underhand|barbell|back|lats|biceps,traps
+Deadlift|barbell|back|lower_back|glutes,hamstrings,traps,lats
+Deficit Deadlift|barbell|back|lower_back|glutes,hamstrings,lats
+Front Lever|bodyweight|back|lats|abs,lower_back
+Good Morning|barbell|back|lower_back|hamstrings,glutes
+Hammer Pulldowns|cable|back|lats|biceps,traps
+Incline Row|dumbbell|back|lats|traps,biceps
+Inverted Row|bodyweight|back|lats|biceps,traps
+Iso-Lateral Row|machine|back|lats|traps,biceps
+Kelso Shrug|cable|back|traps|
+Kelso Shrug|machine|back|traps|
+Lat Pulldown|cable|back|lats|biceps,traps
+Lat Pulldown - Mag Grip|cable|back|lats|biceps,traps
+Lat Pulldown - Neutral Grip|cable|back|lats|biceps,traps
+Lat Pulldown - Underhand|cable|back|lats|biceps
+Neutral Grip Pull Up|bodyweight|back|lats|biceps,traps
+One Arm Lat Pulldown|cable|back|lats|biceps
+Pendlay Row|barbell|back|lats|traps,biceps,lower_back
+Pull Up|bodyweight|back|lats|biceps,traps
+Pulldowns|cable|back|lats|biceps,traps
+Muscle Up|bodyweight|back|lats|triceps,chest,biceps
+Rack Pull|cable|back|lower_back|traps,lats,glutes
+Seated Row|cable|back|lats|traps,biceps
+Seated Row|machine|back|lats|traps,biceps
+Seated Wide-Grip Row|cable|back|lats|traps,biceps
+Seated Wide-Grip Row|machine|back|lats|traps,biceps
+Single Arm Row|cable|back|lats|traps,biceps
+Shrug|barbell|back|traps|
+Shrug|dumbbell|back|traps|
+Shrug|machine|back|traps|
+Single Arm Row|dumbbell|back|lats|traps,biceps
+Sumo Deadlift|barbell|back|lower_back|glutes,hamstrings,lats
+T Bar Row|barbell|back|lats|traps,biceps,lower_back
+Trap 3 Raise|dumbbell|back|traps|
+Trap Bar Shruggs|barbell|back|traps|
+Bench Press|barbell|chest|chest|front_delt,triceps
+Bench Press|cable|chest|chest|front_delt,triceps
+Bench Press|dumbbell|chest|chest|front_delt,triceps
+Bench Press|machine|chest|chest|front_delt,triceps
+Cable Crossover|cable|chest|chest|
+Chest Dip|bodyweight|chest|chest|front_delt,triceps
+Chest Fly|cable|chest|chest|
+Chest Fly|dumbbell|chest|chest|
+Chest Fly|machine|chest|chest|
+Chest Press|machine|chest|chest|front_delt,triceps
+Decline Bench Press|barbell|chest|chest|front_delt,triceps
+Decline Bench Press|dumbbell|chest|chest|front_delt,triceps
+Decline Bench Press|machine|chest|chest|front_delt,triceps
+Incline Bench Press|barbell|chest|chest|front_delt,triceps
+Incline Bench Press|dumbbell|chest|chest|front_delt,triceps
+Incline Bench Press|machine|chest|chest|front_delt,triceps
+Incline Chest Press|machine|chest|chest|front_delt,triceps
+Incline Chest Fly|dumbbell|chest|chest|front_delt,triceps
+Incline Chest Fly|machine|chest|chest|front_delt,triceps
+Low Cable Fly Crossover|cable|chest|chest|
+Pec Deck|machine|chest|chest|
+Pullover|dumbbell|chest|chest|lats
+Push Up|bodyweight|chest|chest|front_delt,triceps
+Push Up (Knees)|bodyweight|chest|chest|front_delt,triceps
+Neck Extension|dumbbell|other|neck|
+Neck Curl|dumbbell|other|neck|
+Belt Squat|machine|legs|quadriceps|glutes,hamstrings
+Box Squat|barbell|legs|quadriceps|glutes,hamstrings,lower_back
+Bulgarian Split Squat|barbell|legs|quadriceps|glutes,hamstrings
+Bulgarian Split Squat|dumbbell|legs|quadriceps|glutes,hamstrings
+Bulgarian Split Squat|machine|legs|quadriceps|glutes,hamstrings
+Cable Pull Through|cable|legs|glutes|hamstrings,lower_back
+Front Squat|barbell|legs|quadriceps|glutes,lower_back
+Glute Ham Raise|machine|legs|glutes|hamstrings,lower_back
+Glute Kickback|cable|legs|glutes|
+Glute Kickback|machine|legs|glutes|
+Glute Medius Kickback|cable|legs|glutes|
+Goblet Squat|dumbbell|legs|quadriceps|glutes
+Hack Squat|machine|legs|quadriceps|glutes,hamstrings
+Hip Abductor|machine|legs|glutes|
+Hip Adductor|machine|legs|glutes|
+Hip Thrust|barbell|legs|glutes|hamstrings
+Hip Thrust|machine|legs|glutes|hamstrings
+Hip Thrust|dumbbell|legs|glutes|hamstrings
+Leverage Squat|machine|legs|quadriceps|glutes,hamstrings
+Leg Extension|machine|legs|quadriceps|
+Leg Press|machine|legs|quadriceps|glutes,hamstrings
+Lunge|barbell|legs|quadriceps|glutes,hamstrings
+Lunge|dumbbell|legs|quadriceps|glutes,hamstrings
+Lunge|machine|legs|quadriceps|glutes,hamstrings
+Lying Leg Curl|machine|legs|hamstrings|calves
+Nordic Hamstring Curls|machine|legs|hamstrings|
+Pendulum Squat|machine|legs|quadriceps|glutes
+Pistol Squat|bodyweight|legs|quadriceps|glutes
+Romanian Deadlift|barbell|legs|hamstrings|glutes,lower_back
+Romanian Deadlift|dumbbell|legs|hamstrings|glutes,lower_back
+Seated Calf Raise|machine|legs|calves|
+Seated Leg Curl|machine|legs|hamstrings|calves
+Single Leg Extension|machine|legs|quadriceps|
+Single Leg Press|machine|legs|quadriceps|glutes,hamstrings
+Single Leg Lying Curl|machine|legs|hamstrings|calves
+Single Leg Seated Curl|machine|legs|hamstrings|calves
+Squat|barbell|legs|quadriceps|glutes,hamstrings,lower_back
+Squat|machine|legs|quadriceps|glutes,hamstrings
+Standing Calf Raise|machine|legs|calves|
+Standing Leg Curl|machine|legs|hamstrings|calves
+Step Up|dumbbell|legs|glutes|quadriceps
+Stiff Leg Deadlift|barbell|legs|hamstrings|glutes,lower_back
+Trap Bar Deadlift|barbell|legs|quadriceps|glutes,hamstrings,lower_back
+V Squat|machine|legs|quadriceps|glutes,hamstrings
+Wall Sit|bodyweight|legs|quadriceps|glutes
+Zercher Squat|machine|legs|quadriceps|glutes,hamstrings,lower_back
+Archer Pull|cable|shoulders|rear_delt|
+Arnold Press|dumbbell|shoulders|front_delt,lateral_delt|triceps
+Face Pull|cable|shoulders|rear_delt|traps
+Front Raise|barbell|shoulders|front_delt|
+Front Raise|cable|shoulders|front_delt|
+Front Raise|dumbbell|shoulders|front_delt|
+Handstand|bodyweight|shoulders|front_delt,lateral_delt|triceps,abs
+Handstand Push Up|bodyweight|shoulders|front_delt,lateral_delt|triceps,abs
+Lateral Raise|cable|shoulders|lateral_delt|
+Lateral Raise|dumbbell|shoulders|lateral_delt|
+Lateral Raise|machine|shoulders|lateral_delt|
+Overhead Press|barbell|shoulders|front_delt,lateral_delt|triceps,traps
+Overhead Press|dumbbell|shoulders|front_delt,lateral_delt|triceps,traps
+Overhead Press|machine|shoulders|front_delt,lateral_delt|triceps,traps
+Overhead Press - Behind the Neck|barbell|shoulders|lateral_delt,rear_delt|triceps,traps
+Push Press|barbell|shoulders|front_delt,lateral_delt|triceps,traps
+Reverse Fly|cable|shoulders|rear_delt|traps
+Reverse Fly|dumbbell|shoulders|rear_delt|traps
+Reverse Fly|machine|shoulders|rear_delt|traps
+Seated Overhead Press|barbell|shoulders|front_delt,lateral_delt|triceps,traps
+Seated Overhead Press|dumbbell|shoulders|front_delt,lateral_delt|triceps,traps
+Seated Overhead Press|machine|shoulders|front_delt,lateral_delt|triceps,traps
+Single Arm Lateral Raise|cable|shoulders|lateral_delt|
+Upright Row|barbell|shoulders|traps|lateral_delt,biceps
+Upright Row|dumbbell|shoulders|traps|lateral_delt,biceps
+Upright Row|cable|shoulders|traps|lateral_delt,biceps
+Battle Ropes|cardio|cardio|lateral_delt|abs,forearms
+Cycling|cardio|cardio|quadriceps|hamstrings,calves,glutes
+Eliptical Machine|cardio|cardio|quadriceps|hamstrings,glutes,calves
+Jump Rope|cardio|cardio|calves|lateral_delt,forearms
+Nordic Skiing|cardio|cardio|quadriceps|hamstrings,glutes,lats,front_delt
+Running|treadmill|cardio|quadriceps|hamstrings,calves,glutes
+Incline Walking|treadmill|cardio|glutes|quadriceps,hamstrings,calves
+Sprints|treadmill|cardio|quadriceps|hamstrings,calves,glutes
+Walking|treadmill|cardio|quadriceps|hamstrings,calves,glutes
+Rowing Machine|machine|cardio|quadriceps,lats,traps|hamstrings,calves
+Heavy Bag|cardio|cardio|front_delt,lateral_delt|triceps

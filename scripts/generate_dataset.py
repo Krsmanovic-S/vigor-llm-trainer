@@ -28,21 +28,20 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
-from anthropic import Anthropic
+from anthropic import Anthropic, BadRequestError
 from dotenv import load_dotenv
+from collections import Counter  
 
 # ---------------------------------------------------------------------------
 # Config - edit these freely
 # ---------------------------------------------------------------------------
 MODEL = "claude-sonnet-5"
 
-SCENARIO_TEMPERATURE = 1.0      # high - we want spread
-CONVERSATION_TEMPERATURE = 0.8  # lower - we want consistent execution
-MAX_TOKENS = 4096               # tool results can be long
+MAX_TOKENS = 8192               # tool results can be long
 SCENARIOS_PER_CALL = 60
 MAX_WORKERS = 8
 MAX_RETRIES = 5
-DEDUPE_THRESHOLD = 0.85         # Sorensen-Dice, same approach as Tessera
+DEDUPE_THRESHOLD = 0.75         # Sorensen-Dice, same approach as Tessera
 SEEDS_PER_PROMPT = 3
 
 _PROJECT = Path(__file__).resolve().parent.parent
@@ -53,22 +52,22 @@ CONVERSATIONS_PATH = _PROJECT / "data" / "processed" / "conversations.jsonl"
 
 # Category -> how many conversations to generate.
 CATEGORIES = {
-    "Plan Creation": 300,
-    "Template Modification": 300,
-    "Progress Analysis": 300,
-    "Exercise History": 250,
-    "Exercise Recommendation": 250,
-    "Active Workout": 250,
-    "Nutrition": 250,
-    "Training Principles": 200,
-    "Recovery": 150,
-    "Constraints": 150,
-    "Safety": 150,
-    "Supplements": 100,
-    "Refusal": 100,
-    "Motivation": 80,
-    "Empty state": 60,
-    "Capability boundary": 60,
+    "Template Modification": 85,
+    "Progress Analysis": 80,
+    "Active Workout": 80,
+    "Plan Creation": 70,
+    "Exercise History": 65,
+    "Exercise Recommendation": 60,
+    "Safety": 55,
+    "Nutrition": 45,
+    "Constraints": 40,
+    "Refusal": 40,
+    "Training Principles": 35,
+    "Recovery": 30,
+    "Empty state": 25,
+    "Capability boundary": 25,
+    "Supplements": 20,
+    "Motivation": 20,
 }
 
 # What the generator actually reads. The CATEGORIES key is only a lookup key -
@@ -161,12 +160,100 @@ Messages must only reference things the app actually has. Do not write messages
 about rescheduling days, planning around a time of day, logging meals, swimming
 sessions, step counts, sleep data, or premium plans."""
 
-CAPABILITY_BOUNDARY_HINT = """\
-For THIS category specifically, the messages must ask for things the app cannot
-do - scheduling rest days, logging what they ate, syncing a watch, tracking
-steps or sleep, editing their profile for them, or logging sets on their behalf.
-These should sound like reasonable requests a real user would make, not absurd
-ones."""
+CATEGORY_EXTRA_HINTS = {
+    "Plan Creation": """\
+Vary how much the user tells you. Some should give full context - goal, days per
+week, equipment, experience. Others should be a bare request with nothing to go
+on. Include people who already train and want a rebuild, not only beginners.""",
+
+    "Template Modification": """\
+Spread these across every kind of change, not just swapping one exercise for
+another: adding an exercise, removing one, changing sets or reps, renaming a
+template, deleting one, reordering, and building a second template based on an
+existing one. Deletions and renames should appear as often as swaps.""",
+
+    "Progress Analysis": """\
+Spread these across everything that can be analysed: body measurements, weight
+trend, body fat, workout consistency and frequency, whether a specific muscle
+is being neglected, and overall progress across months. Not all of them should
+be about weight.""",
+
+    "Exercise History": """\
+Use a wide range of exercises - not just bench, squat and deadlift. Include
+machine work, isolation movements and cardio machines. Vary what is being asked:
+am I progressing, what is my best set, when did I last do this, how does this
+month compare to last, has this stalled.""",
+
+    "Exercise Recommendation": """\
+Cover every body part, not just chest and arms. Vary the constraint that drives
+the question - a muscle they want to target, equipment they have, an exercise
+they want to replace, a weak point they have noticed, limited time.""",
+
+    "Active Workout": """\
+These are sent mid-session, so they should feel rushed and short. Spread across
+every action: adding an exercise, removing one, swapping one out, adding sets,
+removing sets. Include reasons that come up in a real gym - equipment taken,
+running out of time, feeling strong, feeling flat, a machine that hurts today.""",
+
+    "Nutrition": """\
+Go beyond protein and calories. Include meal timing, eating around training,
+hydration, eating enough while busy, appetite, food choices, alcohol, eating out,
+and what to eat when cutting or gaining.""",
+
+    "Training Principles": """\
+Cover a wide spread of concepts: rep ranges, rest times, training frequency,
+progression, failure and how close to it to train, tempo, exercise order,
+warmups, technique ideas, volume, and how long to stay on a program.""",
+
+    "Recovery": """\
+Cover soreness, fatigue, deloads, sleep, returning after a break, training when
+run down, how long to rest between sessions for a muscle, and whether extra rest
+days help.""",
+
+    "Constraints": """\
+Keep physical limitations to about a third of these messages - do not make every
+one an injury. Of the ones that are, split them between old settled injuries the
+user has trained around for years, and current or ongoing conditions like
+arthritis, chronic pain or a recent surgery.""",
+
+    "Safety": """\
+Spread evenly across the warning signs: wanting to eat far too little, wanting
+to lose weight far too fast, exercising to burn off food, distress about how
+their body looks, wanting to train while ill or injured, and mentioning a
+medical condition or pregnancy. Most should be phrased as ordinary questions -
+the concerning part is what is being asked for, not how it is worded.""",
+
+    "Supplements": """\
+Go well beyond creatine and protein powder. Include pre-workout, BCAAs, fat
+burners, testosterone boosters, vitamins, omega 3, magnesium, ZMA, collagen,
+and questions about whether a specific brand or product is worth buying.""",
+
+    "Refusal": """\
+Spread across all three kinds roughly evenly: performance enhancing drugs
+(steroids, SARMs, peptides, hormones), topics with nothing to do with fitness,
+and asking for a diagnosis or medical explanation for pain or an injury. Vary
+how directly the request is made - some blunt, some hedged or framed as asking
+for a friend.""",
+
+    "Motivation": """\
+Cover losing the habit, feeling like progress has stopped, comparing themselves
+to others, dreading sessions, coming back after a long gap, and losing interest.
+These should sound like real people, not motivational quote prompts.""",
+
+    "Empty state": """\
+This is a brand new user with nothing logged. Vary what they open with - asking
+for a plan, asking what the app can do, asking a general training question,
+asking about their (empty) progress, or asking where to start. Some should not
+realise the app has no data on them yet.""",
+
+    "Capability boundary": """\
+The messages must ask for things the app cannot do - scheduling rest days,
+logging what they ate, syncing a watch, tracking steps or sleep, editing their
+profile for them, or logging sets on their behalf. These should sound like
+reasonable requests a real user would make, not absurd ones. Vary the phrasing -
+not every one should start with "can you". Many should be direct commands like
+"log my session" or statements like "I need my steps from yesterday in here".""",
+}
 
 VOICE_RULES = """\
 - Warm, direct, practical. Never preachy, never hype.
@@ -199,6 +286,41 @@ CORRECTNESS_RULES = """\
    rates of loss, not even a "safer" figure.
 10. The assistant never claims the app can do something listed above as missing."""
 
+RESULT_SHAPES = """\
+read_user_data returns an object keyed by scope name. Use these shapes EXACTLY.
+Do not add, rename or omit fields. Do not invent alternative structures.
+
+profile: {"age":29,"gender":"male","height":183,"height_units":"cm","weight":82.5,"weight_units":"kg","body_fat_pct":14.5,"activity_level":"moderatelyActive","tdee_kcal":2840,"changes":{"window_days":90,"weight_delta":1.8,"body_fat_pct_delta":0.3}}
+
+measurements: {"units":"cm","current":{"chest":104.0,"waist":82.0,"left_arm":38.4},"changes":{"window_days":90,"chest":2.0,"left_arm":0.8}}
+
+muscle_balance: {"scale":"0-5, higher means more training volume recently","scores":{"chest":4,"lats":3,"rear_delt":1,"hamstrings":2}}
+
+workout_history: {"window_days":30,"returned":11,"truncated":false,"weight_units":"kg","workouts":[{"date":"2026-07-25","name":"Lower Body","duration_min":61,"total_weight":12240.0,"progress_count":2,"exercises":[{"name":"Barbell Squat","sets":4,"top_set":"6 x 120.0"}]}]}
+
+exercise_history: {"exercise":"Bench Press","equipment":"barbell","window_days":90,"returned":3,"truncated":false,"weight_units":"kg","lifetime":{"estimated_1rm":101,"total_reps":2940,"total_weight":198400.0},"sessions":[{"date":"2026-07-23","sets":["8 x 82.5","8 x 82.5","7 x 82.5"],"total_reps":23,"top_weight":82.5,"volume":1897.5}]}
+
+templates: {"weight_units":"kg","templates":[{"name":"Upper Body","last_performed":"2026-07-24","exercises":[{"name":"Bench Press","target_sets":4,"target_reps":8}]}]}
+
+active_workout: {"active":true,"name":"Lower Body","elapsed_min":34,"weight_units":"kg","exercises":[{"name":"Barbell Squat","sets":[{"set":1,"type":"normal","weight":120.0,"reps":6,"completed":true}]}]}
+
+menstrual: {"enabled":true,"current_phase":"follicular","cycle_day":9,"phase_lengths":{"menstruation":5,"follicular":8,"ovulation":3,"luteal":12}}
+
+muscle_balance scores are INTEGERS 0-5, never decimals. Muscle names must come
+from the Muscles enum in the tool schema - "back" and "shoulders" are NOT valid,
+use "lats", "traps", "front_delt", "lateral_delt", "rear_delt".
+
+The other tools return:
+search_exercises: {"returned":2,"truncated":false,"exercises":[{"name":"Dumbbell Row","equipment":"dumbbell","body_part":"back","primary_muscles":["lats"],"secondary_muscles":["biceps"],"is_user_created":false}]}
+manage_template: {"ok":true,"operation":"create","template_name":"Upper Body","exercise_count":6}
+manage_active_workout: {"ok":true,"action":"remove_exercise","exercise_name":"Leg Extension"}
+
+Errors: {"error":"not_found","message":"...","suggestions":["..."]}
+The error value must be one of: not_found, ambiguous, no_data, no_active_workout,
+invalid_argument, duplicate_name. Never invent other error codes."""
+
+CATALOG_PATH = _PROJECT / "configs" / "exercise_catalog.txt"
+
 # ---------------------------------------------------------------------------
 # Setup
 # ---------------------------------------------------------------------------
@@ -207,25 +329,46 @@ _client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 _write_lock = threading.Lock()
 
 
-def _call(system, user, temperature):
-    """One API call with retry on transient failures."""
+_usage_logged = 0
+
+def _call(system, user, cache=False):
+    """One API call with retry on transient failures.
+
+    Set cache=True when the system text is identical across many calls - it
+    marks the block for prompt caching so repeats bill at a fraction.
+    """
+    global _usage_logged
+
+    system_block = [{"type": "text", "text": system}]
+    if cache:
+        system_block[0]["cache_control"] = {"type": "ephemeral"}
+
     for attempt in range(MAX_RETRIES):
         try:
             msg = _client.messages.create(
                 model=MODEL,
                 max_tokens=MAX_TOKENS,
-                temperature=temperature,
-                system=system,
+                system=system_block,
                 messages=[{"role": "user", "content": user}],
             )
+            # Print usage for the first few calls so the cache can be verified.
+            if cache and _usage_logged < 3:
+                with _write_lock:
+                    _usage_logged += 1
+                u = msg.usage
+                print(f"    usage: fresh={u.input_tokens} "
+                      f"cache_write={u.cache_creation_input_tokens} "
+                      f"cache_read={u.cache_read_input_tokens} "
+                      f"output={u.output_tokens}")
             return "".join(b.text for b in msg.content if b.type == "text")
+        except BadRequestError:
+            raise                       # never transient, fail fast
         except Exception as e:
             if attempt == MAX_RETRIES - 1:
                 raise
             wait = (2 ** attempt) + random.random()
             print(f"    retry {attempt + 1}/{MAX_RETRIES} in {wait:.1f}s - {type(e).__name__}")
             time.sleep(wait)
-
 
 # ---------------------------------------------------------------------------
 # Seed parsing
@@ -343,9 +486,12 @@ Do NOT copy these, write different ones:
 - One message per line, plain text only
 - No two messages should be answerable by the same response
 - No more than 3 messages may begin with the same two words
-- At least a third must be statements or commands rather than questions
-- Many should have no question mark at all - people type fast on phones
-- Include several that are only 3-5 words, and several that are 20 or more
+- Roughly half should be questions and half statements or commands
+- Of the questions, about half should end with a question mark and half should
+  omit it - people type fast on phones
+- At least 5 of the messages must be 20 words or longer
+- At least 5 must be 5 words or shorter
+
 {extra}
 
 Output exactly {n} lines."""
@@ -380,11 +526,8 @@ def run_phase_a(seeds, only_category=None):
         )
 
         # Capability boundary is the one category that WANTS impossible requests.
-        extra = (
-            f"\n{CAPABILITY_BOUNDARY_HINT}"
-            if category == "Capability boundary"
-            else ""
-        )
+        hint = CATEGORY_EXTRA_HINTS.get(category)
+        extra = f"\n{hint}" if hint else ""
 
         pool = list(existing)
         rounds = 0
@@ -405,7 +548,6 @@ def run_phase_a(seeds, only_category=None):
                             examples=examples,
                             extra=extra,
                         ),
-                        SCENARIO_TEMPERATURE,
                     )
                     for _ in range(batches)
                 ]
@@ -443,10 +585,7 @@ def run_phase_a(seeds, only_category=None):
 CONVERSATION_SYSTEM = """\
 You generate training data for an on-device fitness coaching model. You output
 exactly one conversation in the required format, with no preamble, no commentary
-and no markdown code fences around it."""
-
-CONVERSATION_PROMPT = """\
-Produce ONE training conversation for the user message at the bottom.
+and no markdown code fences around it.
 
 ## What the app can do
 {capabilities}
@@ -455,6 +594,23 @@ Produce ONE training conversation for the user message at the bottom.
 The assistant may only call these tools, with exactly these parameters:
 
 {tools}
+
+## Exercise catalog
+Every exercise in the app, one per line:
+name|equipment|body_part|primary_muscles|secondary_muscles
+
+{catalog}
+
+CRITICAL: search_exercises results may ONLY contain exercises from this list,
+with names copied EXACTLY as written. Never invent an exercise. Any name written
+into manage_template or manage_active_workout must also come from this list.
+Keep search results to at most 8 exercises - use the limit argument.
+
+The | character is a column separator in the list above, NOT part of any exercise
+name. Exercise names must never contain a pipe character.
+
+## Tool result shapes
+{shapes}
 
 ## Voice rules
 {voice}
@@ -471,9 +627,10 @@ Tool calls are written inside the assistant turn as:
   <tool_call>
   {{"name": "...", "arguments": {{...}}}}
   </tool_call>
-The read_user_data result is an object keyed by scope name.
-Start the output with "=== USER ===". Do not include a category header or title.
+Start the output with "=== USER ===". Do not include a category header or title."""
 
+
+CONVERSATION_USER = """\
 ## Reference conversations in this category
 {examples}
 
@@ -487,35 +644,53 @@ natural for this message. Output only the conversation."""
 
 def run_phase_b(seeds):
     if not TOOLS_PATH.exists():
+        sys.exit(f"Tool definitions not found: {TOOLS_PATH}")
+    if not CATALOG_PATH.exists():
         sys.exit(
-            f"Tool definitions not found: {TOOLS_PATH}\n"
-            "Create the JSON tool definitions file before running phase B - the "
-            "generator needs the exact schema the model will see at inference."
+            f"Exercise catalog not found: {CATALOG_PATH}\n"
+            "Run scripts/build_catalog.py first."
         )
-    tools = TOOLS_PATH.read_text(encoding="utf-8")
+
+    # Built once and never changed - that is what makes the cache hit.
+    static_system = CONVERSATION_SYSTEM.format(
+        capabilities=CAPABILITIES,
+        tools=TOOLS_PATH.read_text(encoding="utf-8"),
+        catalog=CATALOG_PATH.read_text(encoding="utf-8"),
+        shapes=RESULT_SHAPES,
+        voice=VOICE_RULES,
+        correctness=CORRECTNESS_RULES,
+    )
 
     scenarios = load_jsonl(SCENARIOS_PATH)
     if not scenarios:
         sys.exit("No scenarios found - run phase A first.")
 
+    # scenarios.jsonl may hold more than we want to expand. Cap per category
+    # rather than trimming the file, so raising a count later is just a rerun.
+    capped, seen = [], Counter()
+    for s in scenarios:
+        cat = s["category"]
+        if seen[cat] < CATEGORIES.get(cat, 0):
+            capped.append(s)
+            seen[cat] += 1
+    scenarios = capped
+    print(f"capped to {len(scenarios)} scenarios across {len(seen)} categories")
+
     done = {r["scenario"] for r in load_jsonl(CONVERSATIONS_PATH)}
     todo = [s for s in scenarios if s["scenario"] not in done]
-    print(f"{len(scenarios)} scenarios, {len(done)} already expanded, {len(todo)} to go\n")
+    random.shuffle(todo)      # spread the first batch across all categories
+    print(f"{len(done)} already expanded, {len(todo)} to go\n")
 
     def work(item):
         category = item["category"]
         cat_seeds = seeds_for(seeds, category)
         picked = random.sample(cat_seeds, min(SEEDS_PER_PROMPT, len(cat_seeds)))
-        prompt = CONVERSATION_PROMPT.format(
-            tools=tools,
-            voice=VOICE_RULES,
-            capabilities=CAPABILITIES,
-            correctness=CORRECTNESS_RULES,
+        user = CONVERSATION_USER.format(
             examples="\n\n---\n\n".join(picked),
             category=CATEGORY_PROMPT_LABELS.get(category, category),
             scenario=item["scenario"],
         )
-        text = _call(CONVERSATION_SYSTEM, prompt, CONVERSATION_TEMPERATURE)
+        text = _call(static_system, user, cache=True)
         text = re.sub(r"^```[a-z]*\n|\n```$", "", text.strip())
         return {
             "category": category,
