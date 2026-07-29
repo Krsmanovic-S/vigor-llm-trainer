@@ -1,14 +1,20 @@
 """QLoRA fine-tune Qwen3-1.7B into the Vigor fitness coach.
 
-Trains on the pre-rendered strings from build_training_data.py. Only the "text"
-column is passed to the trainer - the JSONL also has "messages" and "tools", and
-TRL would re-apply the chat template to those without enable_thinking=False,
-making the training prompts differ from what the app produces at inference.
+Changes from the previous run, which trained fine (loss 0.84 -> 0.80, healthy
+grad norms) but produced a broken adapter:
+
+  - load_best_model_at_end is OFF. Reloading a checkpoint into a manually
+    wrapped PeftModel is off the standard path and is the prime suspect for the
+    corrupted final artifact.
+  - Checkpoints are saved once per epoch so you can test each and pick one.
+  - A short generation runs in-process right after training, before saving. If
+    that output is coherent but the saved adapter is not, the problem is in
+    saving or loading rather than in training.
+  - PUSH_TO_HUB defaults to false. Push only after testing a checkpoint.
+
+The precision setup is unchanged because it demonstrably worked.
 
     python train_qlora.py
-
-Env overrides: TRAIN_PATH, VAL_PATH, ADAPTER_OUTPUT_DIR, HF_REPO_ID,
-               PUSH_TO_HUB, HF_TOKEN
 """
 
 import os
@@ -31,7 +37,7 @@ TRAIN_PATH = os.getenv("TRAIN_PATH", str(_PROJECT / "data" / "processed" / "trai
 VAL_PATH = os.getenv("VAL_PATH", str(_PROJECT / "data" / "processed" / "validation.jsonl"))
 ADAPTER_OUTPUT_DIR = os.getenv("ADAPTER_OUTPUT_DIR", str(_PROJECT / "outputs" / "adapter"))
 
-HF_REPO_ID = os.getenv("HF_REPO_ID", "Krsmanovicc/vigor-coach-qlora")
+HF_REPO_ID = os.getenv("HF_REPO_ID", "your-username/vigor-coach-qlora")
 PUSH_TO_HUB = os.getenv("PUSH_TO_HUB", "false").lower() == "true"
 
 LORA_R = 8
@@ -44,42 +50,26 @@ TARGET_MODULES = [
 
 EPOCHS = 2
 BATCH_SIZE = 1
-GRAD_ACCUM = 16                 # effective batch 16
+GRAD_ACCUM = 16
 LEARNING_RATE = 2e-4
 MAX_LENGTH = 2048
 EVAL_EVERY = 10
 WARMUP_STEPS = 5
 SEED = 42
 
-# Compute dtype for the quantized base model. The T4 has fp16 tensor cores and
-# only emulated bf16, so fp16 is the right choice on Turing.
-COMPUTE_DTYPE = torch.float16
+COMPUTE_DTYPE = torch.float16       # T4 has fp16 tensor cores, only emulated bf16
 
 # ---------------------------------------------------------------------------
-# Precision note
-#
-# Mixed precision (fp16=True) wraps training in a GradScaler, and a GradScaler
-# cannot unscale bf16 gradients - the source of
-#   "_amp_foreach_non_finite_check_and_unscale_cuda not implemented for BFloat16"
-# Rather than chase which tensor is still bf16, autocast is disabled entirely:
-# both fp16 and bf16 are False below.
-#
-# This costs very little. The heavy matmuls still run through bitsandbytes at
-# bnb_4bit_compute_dtype (fp16), and the only weights trained in fp32 are the
-# ~8.7M LoRA params, which are a rounding error next to the 1.7B base.
+# Setup
 # ---------------------------------------------------------------------------
 load_dotenv()
 HF_TOKEN = os.getenv("HF_TOKEN") or None
 
 if not torch.cuda.is_available():
-    raise SystemExit("No CUDA GPU detected. Run this on Colab or your home machine.")
+    raise SystemExit("No CUDA GPU detected.")
 
-print(f"GPU: {torch.cuda.get_device_name(0)} | compute dtype: {COMPUTE_DTYPE} | "
-      f"autocast: off")
+print(f"GPU: {torch.cuda.get_device_name(0)} | compute dtype: {COMPUTE_DTYPE} | autocast: off")
 
-# ---------------------------------------------------------------------------
-# Data - loaded first so a bad path fails before the model download
-# ---------------------------------------------------------------------------
 train_ds = load_dataset("json", data_files=TRAIN_PATH, split="train")
 val_ds = load_dataset("json", data_files=VAL_PATH, split="train")
 
@@ -89,11 +79,6 @@ if "text" not in train_ds.column_names:
 train_ds = train_ds.select_columns(["text"])
 val_ds = val_ds.select_columns(["text"])
 print(f"Train: {len(train_ds)} | Validation: {len(val_ds)}")
-
-sample = train_ds[0]["text"]
-print("\nFirst 160 chars of example 0:")
-print(sample[:160].replace("\n", "\\n"))
-print(f"empty think block present: {'<think>' in sample}\n")
 
 # ---------------------------------------------------------------------------
 # Model
@@ -128,16 +113,12 @@ peft_config = LoraConfig(
     task_type="CAUSAL_LM",
 )
 
-# Attach the adapter here rather than letting SFTTrainer do it, so the trainable
-# params can be forced to fp32 before training starts.
+# Trainable params in fp32. With autocast off there is no loss scaling, and
+# fp16 gradients would underflow without it.
 model = get_peft_model(model, peft_config)
 for _name, _param in model.named_parameters():
     if _param.requires_grad:
         _param.data = _param.data.float()
-
-n_bad = sum(1 for _, p in model.named_parameters()
-            if p.requires_grad and p.dtype != torch.float32)
-print(f"trainable params not in fp32: {n_bad}")
 model.print_trainable_parameters()
 
 # ---------------------------------------------------------------------------
@@ -155,19 +136,16 @@ sft_config = SFTConfig(
     warmup_steps=WARMUP_STEPS,
     lr_scheduler_type="cosine",
     optim="paged_adamw_8bit",
-    bf16=False,                 # see the precision note above - both are off
-    fp16=False,                 # on purpose, to avoid the GradScaler entirely
+    bf16=False,
+    fp16=False,
     gradient_checkpointing=True,
     gradient_checkpointing_kwargs={"use_reentrant": False},
     logging_steps=5,
     eval_strategy="steps",
     eval_steps=EVAL_EVERY,
-    save_strategy="steps",
-    save_steps=EVAL_EVERY,
-    save_total_limit=2,
-    load_best_model_at_end=True,
-    metric_for_best_model="eval_loss",
-    greater_is_better=False,
+    save_strategy="epoch",              # one checkpoint per epoch, pick by testing
+    save_total_limit=3,
+    load_best_model_at_end=False,       # removed - suspected cause of corruption
     seed=SEED,
     report_to="none",
     push_to_hub=PUSH_TO_HUB,
@@ -175,7 +153,6 @@ sft_config = SFTConfig(
     hub_token=HF_TOKEN if PUSH_TO_HUB else None,
 )
 
-# peft_config is deliberately NOT passed - the model is already a PeftModel.
 trainer = SFTTrainer(
     model=model,
     args=sft_config,
@@ -185,20 +162,50 @@ trainer = SFTTrainer(
 )
 
 steps = max(1, len(train_ds) // (BATCH_SIZE * GRAD_ACCUM)) * EPOCHS
-print(f"\n~{steps} total steps, evaluating every {EVAL_EVERY}\n")
+print(f"\n~{steps} total steps, evaluating every {EVAL_EVERY}, saving each epoch\n")
 
 trainer.train()
+
+# ---------------------------------------------------------------------------
+# In-memory sanity check - before anything is saved or reloaded
+# ---------------------------------------------------------------------------
+print("\n" + "=" * 70)
+print("SANITY CHECK - generating from the model still in memory")
+print("=" * 70)
+
+model.config.use_cache = True
+model.eval()
+
+probe = [
+    {"role": "system", "content": "You are a knowledgeable personal fitness coach."},
+    {"role": "user", "content": "how much protein should I eat"},
+]
+try:
+    text = tokenizer.apply_chat_template(
+        probe, tokenize=False, add_generation_prompt=True, enable_thinking=False)
+except TypeError:
+    text = tokenizer.apply_chat_template(probe, tokenize=False, add_generation_prompt=True)
+
+inputs = tokenizer([text], return_tensors="pt").to(model.device)
+with torch.no_grad():
+    out = model.generate(**inputs, max_new_tokens=150, do_sample=False)
+print(tokenizer.decode(out[0][inputs.input_ids.shape[1]:], skip_special_tokens=True).strip())
+print("=" * 70)
+print("If the above is coherent, training is fine and any breakage is in "
+      "saving or loading.\nIf it is word salad, the problem is in training "
+      "itself.\n")
+
+model.config.use_cache = False
 
 # ---------------------------------------------------------------------------
 # Save
 # ---------------------------------------------------------------------------
 trainer.save_model(ADAPTER_OUTPUT_DIR)
 tokenizer.save_pretrained(ADAPTER_OUTPUT_DIR)
-print(f"\nAdapter saved to {ADAPTER_OUTPUT_DIR}")
+print(f"Adapter saved to {ADAPTER_OUTPUT_DIR}")
+print("Per-epoch checkpoints are in checkpoint-* subfolders. Test each with "
+      "test_model.py before pushing anything.")
 
 if PUSH_TO_HUB:
     trainer.push_to_hub()
-    print(f"Adapter pushed to https://huggingface.co/{HF_REPO_ID}")
-else:
-    print("PUSH_TO_HUB is false - local only. On Colab the runtime is wiped on "
-          "disconnect, so set PUSH_TO_HUB=true.")
+    print(f"Pushed to https://huggingface.co/{HF_REPO_ID}")
