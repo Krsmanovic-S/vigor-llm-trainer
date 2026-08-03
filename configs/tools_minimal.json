@@ -1,0 +1,37 @@
+[
+    {
+        "type": "function",
+        "function": {
+            "name": "get_exercise_stats",
+            "description": "Past performance for one exercise - recent sessions, weights and reps.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "exercise": { "type": "string", "description": "Exercise name." }
+                },
+                "required": ["exercise"]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "find_exercises",
+            "description": "Search the app's exercise catalog by body part or equipment.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "body_part": {
+                        "type": "string",
+                        "enum": ["chest", "back", "shoulders", "arms", "legs", "abs", "cardio"]
+                    },
+                    "equipment": {
+                        "type": "string",
+                        "enum": ["dumbbell", "barbell", "cable", "machine", "bodyweight"]
+                    }
+                },
+                "required": []
+            }
+        }
+    }
+]

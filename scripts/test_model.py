@@ -9,8 +9,8 @@ from peft import PeftModel
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 
 BASE_MODEL = "Qwen/Qwen3-1.7B"
-ADAPTER = os.getenv("ADAPTER", "/content/outputs/adapter")   # or your HF repo id
-TOOLS_PATH = os.getenv("TOOLS_PATH", "/content/tools.json")
+ADAPTER = os.getenv("ADAPTER", r"D:\Development\vigor-llm-trainer\outputs\adapter")
+TOOLS_PATH = os.getenv("TOOLS_PATH", r"D:\Development\vigor-llm-trainer\configs\tools.json")
 
 SYSTEM_PROMPT = (
     "You are a knowledgeable personal fitness and nutrition coach inside a "
@@ -111,8 +111,8 @@ model = AutoModelForCausalLM.from_pretrained(
     BASE_MODEL,
     quantization_config=BitsAndBytesConfig(
         load_in_4bit=True, bnb_4bit_use_double_quant=True,
-        bnb_4bit_compute_dtype=torch.float16, bnb_4bit_quant_type="nf4"),
-    dtype=torch.float16, device_map="auto")
+        bnb_4bit_compute_dtype=torch.bfloat16, bnb_4bit_quant_type="nf4"),
+    dtype=torch.bfloat16, device_map={"": 0})
 model = PeftModel.from_pretrained(model, ADAPTER)
 model.eval()
 print(f"loaded adapter from {ADAPTER}\n")

@@ -4,12 +4,18 @@ Produces train/validation/test files where each line has:
   messages - the conversation in role/content form, with tool_calls and tool
              results as separate turns
   tools    - the tool schema, identical for every example
-  text     - the fully rendered training string, produced with
-             enable_thinking=False
+  text     - the fully rendered training string
 
-The rendered text is what matters. It must byte-match what the app produces at
-inference, otherwise the model is trained on one prompt shape and used with
-another. Run with --preview to print one rendered example for that comparison.
+THE THINK BLOCK
+---------------
+Qwen3's template emits "<think>\\n\\n</think>" only on the FINAL assistant turn.
+At inference, add_generation_prompt=True emits it on EVERY generation. Trained
+as-is, the model only ever sees that prefix followed by prose, never by a tool
+call - and it learns exactly that, refusing to call tools at all and claiming it
+has no access to user data.
+
+So after rendering, the block is inserted into every assistant turn that lacks
+one. Now the prefix means the same thing in training and at inference.
 
     python scripts/build_training_data.py --preview
     python scripts/build_training_data.py
@@ -53,6 +59,9 @@ OUT_DIR = _PROJECT / "data" / "processed"
 
 BLOCK_RE = re.compile(r"^=== (USER|ASSISTANT|TOOL) ===[ \t]*$", re.MULTILINE)
 TOOLCALL_RE = re.compile(r"<tool_call>\s*(.*?)\s*</tool_call>", re.DOTALL)
+
+ASSISTANT_HEADER = "<|im_start|>assistant\n"
+THINK_BLOCK = "<think>\n\n</think>\n\n"
 
 
 # ---------------------------------------------------------------------------
@@ -111,7 +120,6 @@ def validate(messages):
     if len(messages[-1]["content"]) < MIN_ASSISTANT_CHARS:
         return "final assistant turn is a stub"
 
-    # Every tool_call must be followed by exactly one tool message.
     for i, m in enumerate(messages):
         if m["role"] == "assistant" and m.get("tool_calls"):
             want = len(m["tool_calls"])
@@ -130,7 +138,6 @@ def validate(messages):
 # ---------------------------------------------------------------------------
 
 def load_seeds(path):
-    """Parse curated_data.md into the same shape as generated conversations."""
     if not path.exists():
         print(f"  WARNING: seeds not found at {path}, skipping")
         return []
@@ -141,7 +148,6 @@ def load_seeds(path):
         if not m:
             continue
         category = m.group(1).strip()
-        # Everything from the first USER marker onward is the conversation.
         idx = block.find("=== USER ===")
         if idx == -1:
             continue
@@ -153,6 +159,33 @@ def load_seeds(path):
             "source": "seed",
         })
     return rows
+
+
+# ---------------------------------------------------------------------------
+# Think block normalization
+# ---------------------------------------------------------------------------
+
+def add_think_blocks(text):
+    """Ensure every assistant turn opens with the empty think block.
+
+    See the module docstring. Without this, tool-calling turns render without
+    the block while the final prose turn renders with it, so the model learns
+    that the block means 'prose follows' and stops emitting tool calls.
+    """
+    parts = text.split(ASSISTANT_HEADER)
+    if len(parts) == 1:
+        return text
+    fixed = [parts[0]]
+    for part in parts[1:]:
+        fixed.append(part if part.startswith("<think>") else THINK_BLOCK + part)
+    return ASSISTANT_HEADER.join(fixed)
+
+
+def check_think_blocks(text):
+    """Return (assistant turns, turns with a think block) for verification."""
+    turns = text.count(ASSISTANT_HEADER)
+    with_think = text.count(ASSISTANT_HEADER + "<think>")
+    return turns, with_think
 
 
 # ---------------------------------------------------------------------------
@@ -185,9 +218,8 @@ def main():
     tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL)
 
     def render(messages):
-        """Render exactly as the app will at inference."""
         try:
-            return tokenizer.apply_chat_template(
+            text = tokenizer.apply_chat_template(
                 messages,
                 tools=tools,
                 tokenize=False,
@@ -195,10 +227,10 @@ def main():
                 enable_thinking=False,
             )
         except TypeError:
-            # Templates that do not know enable_thinking simply ignore it.
-            return tokenizer.apply_chat_template(
+            text = tokenizer.apply_chat_template(
                 messages, tools=tools, tokenize=False, add_generation_prompt=False
             )
+        return add_think_blocks(text)
 
     # --- convert -----------------------------------------------------------
     examples, dropped = [], Counter()
@@ -225,17 +257,29 @@ def main():
         for reason, n in dropped.most_common():
             print(f"  {n:4d}  {reason}")
 
+    # --- verify the think block landed on every assistant turn ---------------
+    bad = 0
+    for ex in examples:
+        turns, with_think = check_think_blocks(ex["text"])
+        if turns != with_think:
+            bad += 1
+    print(f"\nexamples with an assistant turn missing the think block: {bad}")
+    if bad:
+        print("  ERROR: add_think_blocks did not cover everything. Do not train "
+              "on this - the tool-calling turns will differ from inference.")
+        sys.exit(1)
+
     if args.preview:
         ex = next(e for e in examples if any(m.get("tool_calls") for m in e["messages"]))
+        turns, with_think = check_think_blocks(ex["text"])
         print("\n" + "=" * 70)
-        print("RENDERED EXAMPLE - diff this against what your app produces")
+        print("RENDERED EXAMPLE - every assistant turn must open with <think>")
         print("=" * 70)
         print(ex["text"])
         print("=" * 70)
+        print(f"assistant turns: {turns} | with think block: {with_think}")
         print(f"length: {len(ex['text'])} chars, "
               f"{len(tokenizer(ex['text'])['input_ids'])} tokens")
-        thinking = [t for t in ("<think>", "</think>") if t in ex["text"]]
-        print(f"thinking tags present: {thinking or 'none'}")
         return
 
     # --- dedupe on the opening user message --------------------------------
