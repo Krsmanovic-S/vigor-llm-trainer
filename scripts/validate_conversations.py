@@ -39,6 +39,24 @@ LEAK_RE = re.compile(r"\bif false else\b|Something went wrong parsing|"
 stats = Counter()
 recovered = Counter()
 
+_MUSCLE_FIX = {
+    "frontDelt": "front_delt", "lateralDelt": "lateral_delt",
+    "rearDelt": "rear_delt", "lowerBack": "lower_back",
+}
+
+def fix_muscle_keys(obj):
+    n = 0
+    if isinstance(obj, dict):
+        for bad, good in _MUSCLE_FIX.items():
+            if bad in obj:
+                obj[good] = obj.pop(bad)
+                n += 1
+        for v in obj.values():
+            n += fix_muscle_keys(v)
+    elif isinstance(obj, list):
+        for v in obj:
+            n += fix_muscle_keys(v)
+    return n
 
 # ---------------------------------------------------------------------------
 # Lenient JSON
@@ -288,6 +306,7 @@ def process(row):
         p = fix_pipes(result);               stats["pipes"] += p
         c = fix_counts(result);              stats["counts"] += c
         s = fix_swap_shape(result);          stats["swap_shape"] += s
+        m = fix_muscle_keys(result);         stats["muscle keys"] += m
         total = f + a + p + c + s
         if total or repaired_json:
             blocks[idx] = ("TOOL", json.dumps(result, ensure_ascii=False))

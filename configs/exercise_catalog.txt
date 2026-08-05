@@ -104,7 +104,6 @@ T Bar Row|barbell|back|lats|traps,biceps,lower_back
 Trap 3 Raise|dumbbell|back|traps|
 Trap Bar Shruggs|barbell|back|traps|
 Bench Press|barbell|chest|chest|front_delt,triceps
-Bench Press|cable|chest|chest|front_delt,triceps
 Bench Press|dumbbell|chest|chest|front_delt,triceps
 Bench Press|machine|chest|chest|front_delt,triceps
 Cable Crossover|cable|chest|chest|

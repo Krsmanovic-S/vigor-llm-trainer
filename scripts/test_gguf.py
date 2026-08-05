@@ -28,7 +28,7 @@ import requests
 SERVER = "http://localhost:8080/v1/chat/completions"
 _PROJECT = Path(__file__).resolve().parent.parent
 
-TOOLS_PATH = Path(os.getenv("TOOLS_PATH", _PROJECT / "configs" / "tools_minimal.json"))
+TOOLS_PATH = Path(os.getenv("TOOLS_PATH", _PROJECT / "configs" / "tools.json"))
 CATALOG_PATH = _PROJECT / "configs" / "exercise_catalog.txt"
 
 SYSTEM_PROMPT = (
