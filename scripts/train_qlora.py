@@ -63,13 +63,13 @@ TARGET_MODULES = [
 # Last run's eval bottomed out around epoch 0.9 (loss 0.80) then degraded to
 # 1.01 by epoch 2, with entropy climbing 1.57 -> 2.19. Two epochs is the
 # ceiling, and epoch 1 may well be the better checkpoint.
-EPOCHS = 2
-BATCH_SIZE = 2                  # 12GB at 4096 context; drop to 1 if OOM
-GRAD_ACCUM = 8                  # effective batch 16
+EPOCHS = 3
+BATCH_SIZE = 4          # sequences are much shorter now; drop to 2 if OOM
+GRAD_ACCUM = 4          # effective batch stays 16
 LEARNING_RATE = 2e-4
-MAX_LENGTH = 4096               # token report: median 1749, p90 2390, max 4973
+MAX_LENGTH = 2688
 EVAL_EVERY = 10
-WARMUP_STEPS = 5
+WARMUP_STEPS = 10
 SEED = 42
 
 # ---------------------------------------------------------------------------
