@@ -78,3 +78,4 @@ Running|treadmill|cardio|quadriceps|hamstrings,calves,glutes
 Incline Walking|treadmill|cardio|glutes|quadriceps,hamstrings,calves
 Walking|treadmill|cardio|quadriceps|hamstrings,calves,glutes
 Rowing Machine|machine|cardio|quadriceps,lats,traps|hamstrings,calves
+Leg Press|machine|legs|quadriceps|glutes,hamstrings
