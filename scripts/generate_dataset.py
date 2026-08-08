@@ -23,14 +23,7 @@ re-run without regenerating anything.
 All phases are resumable - rerun the same command and finished work is skipped.
 """
 
-import argparse
-import json
-import os
-import random
-import re
-import sys
-import threading
-import time
+import argparse, json, os, random, re, sys, threading, time
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -43,7 +36,7 @@ from openai import OpenAI, BadRequestError
 # ---------------------------------------------------------------------------
 MODEL = "qwen/qwen3-30b-a3b-instruct-2507:floor"
 
-MAX_TOKENS = 8192               # tool results can be long
+MAX_TOKENS = 4096               # tool results can be long
 SCENARIOS_PER_CALL = 60
 MAX_WORKERS = 8
 MAX_RETRIES = 5
@@ -77,10 +70,7 @@ CATEGORIES = {
     "Motivation": 15,
 }
 
-# What the generator actually reads. The CATEGORIES key is only a lookup key -
-# never send it to the model on its own. A bare label like "Refusal" gets read
-# as "write refusals" rather than "write messages that should be refused",
-# which silently inverts an entire category.
+# What the generator actually reads. The CATEGORIES key is only a lookup key
 CATEGORY_PROMPT_LABELS = {
     "Plan Creation":
         "asking for workout templates to be built for them - a training split, "

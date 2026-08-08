@@ -1,4 +1,5 @@
-"""Merge the trained LoRA adapter into the base model.
+"""
+Merge the trained LoRA adapter into the base model.
 
 llama.cpp cannot read LoRA weights sitting beside a base model - it needs one
 merged set. The base is loaded in fp16 rather than 4-bit on purpose: merging
@@ -11,12 +12,11 @@ Needs roughly 4GB of RAM. Runs on CPU if the GPU is busy.
     python scripts/merge_adapter.py --adapter outputs/adapter/checkpoint-46
 """
 
-import argparse
+import argparse, torch
 from pathlib import Path
-
-import torch
 from peft import PeftModel
 from transformers import AutoModelForCausalLM, AutoTokenizer
+
 
 BASE_MODEL = "Qwen/Qwen3-1.7B"
 _PROJECT = Path(__file__).resolve().parent.parent
@@ -64,10 +64,6 @@ def main():
     print(f"\nmerged model written to {out}")
     for f in sorted(out.iterdir()):
         print(f"  {f.name}  {f.stat().st_size / 1e6:.0f} MB")
-
-    print("\nNext:")
-    print(f"  cd llama.cpp")
-    print(f"  python convert_hf_to_gguf.py {out} --outfile vigor-f16.gguf --outtype f16")
 
 
 if __name__ == "__main__":
